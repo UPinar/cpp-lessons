@@ -205,7 +205,7 @@
   - trailing return type
   - member function template
   - class templates
-  - class template argument deduction
+  - class template argument deduction (CTAD)
   - explicit(full) specialization 
   - partial specialization
   - alias templates
@@ -223,69 +223,17 @@
       - binary fold (left, right)
     - static if (C++17) 
 
-### [Standart Template Library(STL)](https://github.com/UPinar/CppLessons/tree/main/StandartTemplateLibrary)
-  - iterators 
-  - iterator categories
-    - input iterator
-    - output iterator
-    - forward iterator
-    - bidirectional iterator
-    - random access iterator
-    - contigious iterator (Modern C++)
-  - `std::copy` algorithm
-  - `std::sort` algorithm 
-  - `std::find` algorithm
-  - `std::back_inserter` && `std::front_inserter` algorithms
-  - iterator manipulator functions
-    - `std::advance`
-    - `std::distance`
-    - `std::next` && `std::prev`
-    - `std::iter_swap`
-  - tag dispatch technique
-  - `std::reverse_iterator` (iterator adapter)
-  - `std::count` algorithm
-  - `std::count_if` algorithm
-  - `std::find_if` algorithm
-  - `std::copy_if` algorithm
-  - `std::transform` algorithm
-  - `std::for_each` algorithm`
-  - `std::all_of` && `std::any_of` && `std::none_of` algorithms
-  - `std::max_element` algorithm
-  - Standart function objects(standart functors)
-  - `std::replace` && `std::replace_if` algorithms
-  - `std::reverse_copy` && `std::remove_copy` && `std::remove_copy_if` algorithms
-  - containers
-    - `std::vector` container
-  - lexicographical compare
-  - lambda expressions (function)
-  - generalized lambda expression
-  - lambda init capture(C++14)
-  - positive lambda idiom
-  - Immediately Invoked Function(Lambda) Expression [IIFE] idiom
-  - remove-erase idiom
-  - sorting algorithms
-    - `std::stable_sort` && `std::sort` stable and unstable sort algorithms
-    - `std::partial_sort` algorithm
-    - `std::nth_element` algorithm
-    - `std::partition` && `std::stable_parition` && `std::partition_copy` algorithms
-  - `std::make_heap` && `std::push_heap` && `std::pop_heap` && `std::sort_heap` algorithms
-  - iterator invalidation
-  - `std::deque` container
-  - `std::list`(double-linked list) container
-  - `std::forward_list`(singly-linked list)
-  - `std::set` container
-  - `std::lower_bound` && `std::upper_bound` && `std::equal_range` algorithms
-  - `std::map` and `std::multimap` containers
-  - ostream iterator class
-  - `std::hash` function object class
-  - unordered_ containers
-    - `std::unordered_set` && `std::unordered_map`container
-  - `std::array` container 
-  - `std::stack` container adaptor
-  - `std::queue` container adaptor
-  - `std::priority_queue` container adaptor
-  - reference wrapper `std::reference_wrapper`
-  - `std::bind` function adaptor
+### [Standart Template Library(STL)](https://github.com/UPinar/CppLessons/tree/main/standart_template_library)
+  - standart function objects(standart functors)
+    - `std::less`, `std::greater`, `std::plus`, `std::negate` etc
+  - lambda expressions(functions)
+    - generalized lambda expression
+    - lambda init capture (C++14)
+    - positive lambda idiom
+    - immediately invoked function(lambda) expression (IIFE) idiom
+  - `std::hash`
+  - `std::reference_wrapper`
+  - `std::bind`
   - `std::function`
   - member function pointers
   - data member pointers
@@ -299,6 +247,66 @@
   - dynamic storage objects
   - placement new expressions
   - overloading operator new() and operator delete() functions as a member function
+  
+### [STL Iterators](https://github.com/UPinar/CppLessons/tree/main/stl_iterators)
+  - iterator categories
+  - const_iterator - iterator adaptor
+  - iterator manipulator functions
+    - `std::advance`
+      - tag dispatch technique
+    - `std::distance`
+    - `std::next`, `std::prev`
+    - `std::iter_swap`
+  - reverse_iterator - iterator adaptor
+  - iterator invalidation
+  - `std::ostream_iterator` class
+
+### [STL Algorithms](https://github.com/UPinar/CppLessons/tree/main/stl_algorithms)
+  - `std::copy`, `std::copy_if`
+  - `std::sort`
+  - `std::find`, `std::find_if`
+  - `std::back_inserter`, `std::front_inserter`
+  - `std::count`, `std::count_if`
+  - `std::transform`
+  - `std::for_each`
+  - `std::all_of`, `std::any_of`, `std::none_of`
+  - `std::max_element`
+  - `std::minmax_element`
+  - `std::replace`, `std::replace_if`
+  - `std::reverse`, `std::reverse_copy`
+  - `std::remove_copy`, `std::remove_copy_if`
+  - `std::lexicographical_compare`
+  - `std::generate_n`
+  - `std::remove`, `std::remove_if`
+    - remove-erase idiom
+  - `std::unique`
+  - sorting algorithms
+    - `std::sort`
+    - `std::stable_sort`
+    - `std::partial_sort`, `std::partial_sort_copy`
+    - `std::nth_element` 
+    - `std::partition` 
+    - `std::stable_partition` 
+    - `std::partition_copy` 
+    - `std::is_sorted`, `std::is_sorted_until`
+  - `std::make_heap`, `std::pop_heap`, `std::push_heap`, `std::sort_heap`
+  - `std::lower_bound`, `std::upper_bound`, `std::equal_range`
+
+### [STL Containers](https://github.com/UPinar/CppLessons/tree/main/stl_containers)
+  - containers
+    - `std::vector`         dynamic array
+    - `std::deque`          double ended queue
+    - `std::list`           doubly-linked list
+    - `std::forward_list`   singly-linked list
+    - `std::set`, `std::multiset`
+    - `std::map`, `std::multimap`
+    - `std::unordered_set`
+    - `std::array`
+  - container adaptors
+    - `std::stack`
+    - `std::queue`
+    - `std::priority_queue`
+
 
 ### [Smart Pointers](https://github.com/UPinar/CppLessons/tree/main/SmartPointers)
   - `std::unique_ptr` unique pointer
