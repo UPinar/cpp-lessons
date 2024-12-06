@@ -992,6 +992,63 @@
   using Word      = int; 
 */
 
+/*
+                        ------------------
+                        | decltype(auto) |
+                        ------------------
+*/
+
+/*
+  #include <utility>    // std::move
+
+  template <typename T>
+  decltype(auto) foo(T& val)
+  {
+    return val;
+    // "val"              : int&
+    // "decltype(val)"    : int&
+
+    // because of "val" is a reference to an object
+    // (is not copied to function parameter)
+    // returning a reference to "val" will NOT
+    // cause dangling reference
+  }
+
+  decltype(auto) bar(int val)
+  {
+    return (val);     // undefined behaviour
+    // "val"              : int
+    // "decltype(val)"    : int
+    // "decltype((val))"  : int&
+    // decltype(auto)     : int&
+
+    // because of "val" is a copied function parameter
+    // returning reference to "val" 
+    // will cause dangling reference.
+    // because "val" will be destroyed when "bar" function's
+    // scope ends.
+  }
+
+  int main()
+  {
+    int ival = 11;
+    // ------------------------------------------
+
+    foo(ival);
+    bar(ival);
+
+    // ------------------------------------------
+
+    decltype(ival);                           // int  
+    decltype(auto) elem1 = ival;              // int
+    decltype(auto) elem2 = (ival);            // int&
+    decltype(auto) elem3 = std::move(ival);   // int&&
+
+
+    // ------------------------------------------
+  }
+*/
+
 // ---------------------------------------------------
 // ---------------------------------------------------
 // ---------------------------------------------------
