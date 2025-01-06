@@ -1049,6 +1049,210 @@
   }
 */
 
+/*
+        ----------------------------------------------------
+        | CRTP(Curiously Recurring Template Pattern) idiom |
+        ----------------------------------------------------
+*/
+
+/*
+  - used for compile-time polymorphism
+  - calling derived class member functions 
+    from base classes member function.
+*/
+
+/*
+  template <typename T>
+  class Animal {
+  public:
+    void sound()
+    {
+      static_cast<T*>(this)->make_sound();
+    }
+  };
+
+  class Dog : public Animal<Dog> {
+  public:
+    void make_sound()
+    {
+      std::cout << "hav\n";
+    }
+  };
+
+  class Cat : public Animal<Cat> {
+  public:
+    void make_sound() {
+      std::cout << "miyav\n";
+    }
+  };
+
+  class Lamb : public Animal<Lamb> {
+  public:
+    void make_sound() {
+      std::cout << "bee\n";
+    }
+  };
+
+  template <typename T>
+  void func_sound(Animal<T>& animal)
+  {
+    animal.sound();
+  }
+
+  int main()
+  {
+    Dog dog;
+    func_sound(dog);    // output -> hav
+
+    Cat cat;
+    func_sound(cat);    // output -> miyav
+
+    Lamb lamb;
+    func_sound(lamb);   // output -> bee
+  }
+*/
+
+/*
+  template <typename Der>
+  class Base {
+  public:
+    bool is_greater(const Base& other)const
+    {
+      return !static_cast<const Der&>(*this).operator<(other);
+    }
+  };
+
+  class Der_1 : public Base<Der_1> {
+  public:
+    bool operator<(const Der_1&);
+  };
+
+  class Der_2 : public Base<Der_2> {
+  public:
+    bool operator<(const Der_2&);
+  };
+*/
+
+/*
+  #include <string>
+  #include <utility>  // std::move
+
+  template <typename Der>
+  struct Compare {
+    const Der& func_der() const
+    {
+      return static_cast<const Der&>(*this);
+    }
+
+    friend bool operator>(const Compare<Der>& lhs, 
+                          const Compare<Der>& rhs)
+    {
+      return rhs.func_der() < lhs.func_der();
+    }
+
+    friend bool operator>=( const Compare<Der>& lhs, 
+                            const Compare<Der>& rhs)
+    {
+      return !(lhs.func_der() < rhs.func_der());
+    }
+
+    friend bool operator<=( const Compare<Der>& lhs, 
+                            const Compare<Der>& rhs)
+    {
+      return !(rhs.func_der() < lhs.func_der());
+    }
+
+    friend bool operator==( const Compare<Der>& lhs, 
+                            const Compare<Der>& rhs)
+    {
+      return  !(lhs.func_der() < rhs.func_der()) && 
+              !(rhs.func_der() < lhs.func_der());
+    }
+
+    friend bool operator!=( const Compare<Der>& lhs, 
+                            const Compare<Der>& rhs)
+    {
+      return !(lhs == rhs);
+    }
+  };
+
+  // overloading "operator<" member function of derived classes
+  // is enough to use all of the comparison operators
+  // overloaded in base class.
+
+  class Myclass : public Compare<Myclass> {
+  private:
+    int m_x;
+  public:
+    Myclass(int x) : m_x{ x } 
+    {}
+    bool operator<(const Myclass& other) const
+    {
+      return m_x < other.m_x;
+    }
+  };
+
+  class Person : public Compare<Person> {
+  private:
+    std::string m_name;
+  public:
+    Person(std::string name) : m_name(std::move(name)) 
+    {}
+
+    bool operator<(const Person& other) const
+    {
+      return m_name < other.m_name;
+    }
+  };
+
+  int main()
+  {
+    using namespace std;
+    std::cout << boolalpha;
+
+    // ------------------------------------------------
+
+    Myclass m1{ 444 }, m2{ 222 };
+
+    cout << "(m1 <  m2) = " << (m1 <  m2)<< '\n';
+    cout << "(m1 <= m2) = " << (m1 <= m2)<< '\n';
+    cout << "(m1 >  m2) = " << (m1 >  m2)<< '\n';
+    cout << "(m1 >= m2) = " << (m1 >= m2)<< '\n';
+    cout << "(m1 == m2) = " << (m1 == m2)<< '\n';
+    cout << "(m1 != m2) = " << (m1 != m2)<< '\n';
+
+    // output ->
+    //  (m1 <  m2) = false
+    //  (m1 <= m2) = false
+    //  (m1 >  m2) = true
+    //  (m1 >= m2) = true
+    //  (m1 == m2) = false
+    //  (m1 != m2) = true
+
+    // ------------------------------------------------
+
+    Person per_1{ "world" };
+    Person per_2{ "galaxy" };
+
+    cout << "(per_1 <  per_2) = " << (per_1 <  per_2)<< '\n';
+    cout << "(per_1 <= per_2) = " << (per_1 <= per_2)<< '\n';
+    cout << "(per_1 >  per_2) = " << (per_1 >  per_2)<< '\n';
+    cout << "(per_1 >= per_2) = " << (per_1 >= per_2)<< '\n';
+    cout << "(per_1 == per_2) = " << (per_1 == per_2)<< '\n';
+    cout << "(per_1 != per_2) = " << (per_1 != per_2)<< '\n';
+
+    // output ->
+    //  (per_1 <  per_2) = false
+    //  (per_1 <= per_2) = false
+    //  (per_1 >  per_2) = true
+    //  (per_1 >= per_2) = true
+    //  (per_1 == per_2) = false
+    //  (per_1 != per_2) = true
+
+    // ------------------------------------------------
+  }
+*/
+
 // ---------------------------------------------------
 // ---------------------------------------------------
 // ---------------------------------------------------

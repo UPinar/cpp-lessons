@@ -1,4 +1,4 @@
-# CppLessons
+<h1 align="center"> CppLessons </h1>
 
 ### [Reference Semantics](https://github.com/UPinar/CppLessons/tree/main/reference_semantics)
   - L value references
@@ -292,10 +292,10 @@
 
 ### [STL Containers](https://github.com/UPinar/CppLessons/tree/main/stl_containers)
   - containers
-    - `std::vector`         dynamic array
-    - `std::deque`          double ended queue
-    - `std::list`           doubly-linked list
-    - `std::forward_list`   singly-linked list
+    - `std::vector` dynamic array
+    - `std::deque` double ended queue
+    - `std::list` doubly-linked list
+    - `std::forward_list` singly-linked list
     - `std::set`, `std::multiset`
     - `std::map`, `std::multimap`
     - `std::unordered_set`
@@ -318,10 +318,9 @@
 ### [Smart Pointers](https://github.com/UPinar/CppLessons/tree/main/smart_pointers)
   - dynamic storage objects
   - placement new expression
-  - `std::unique_ptr` unique pointer
-  - `std::shared_ptr` shared pointer
-  - `std::weak_ptr` weak pointer
-  - CRTP(Curiously Recurring Template Pattern) idiom 
+  - `std::unique_ptr`
+  - `std::shared_ptr`
+  - `std::weak_ptr`
 
 ### [Input - Output Operations](https://github.com/UPinar/CppLessons/tree/main/InputOutput)
   - Formatted IO Operations
@@ -390,3 +389,4 @@
   - perfect forwarding
   - type alias
   - `decltype(auto)`
+  - CRTP(Curiously Recurring Template Pattern) idiom

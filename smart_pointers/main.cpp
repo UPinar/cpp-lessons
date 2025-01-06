@@ -864,918 +864,824 @@
   }
 */
 
-// -------------------------------------------------
-// -------------------------------------------------
-// -------------------------------------------------
-// -------------------------------------------------
-// -------------------------------------------------
-
-// TODO: CONTINUE FROM HERE
+/*
+                        -------------------
+                        | std::unique_ptr |
+                        -------------------
+*/
 
 /*
-                      -----------------------
-                      | std::unique pointer |
-                      -----------------------
+  - std::unique_ptr class template 
+    is a wrapper class for a pointer.
 */
 
 /*
   #include <memory>
 
   template <typename T>
-  struct DefaultDelete {
+  struct Default_Delete {
     void operator(T* p)
     {
       delete p;
     }
   };
 
-  template <typename T, typename D = DefaultDelete<T>>
-  class UniquePtr {
+  template <typename T, typename Deleter = Default_Delete<T>>
+  class Unique_Ptr {
+  private:
+    T* m_p{};
   public:
-    UniquePtr() = default;
+    Unique_Ptr() = default;
 
-    UniquePtr(T* p) : mp{p} {}
+    Unique_Ptr(T* p) : m_p{ p } 
+    {}
 
-    ~UniquePtr()
+    ~Unique_Ptr()
     {
-      if (mp)
-        D{}(mp);
+      if (m_p)
+        Deleter{}(m_p);
     }
 
     T& operator*()
     {
-      return *mp;
+      return *m_p;
     }
+
     T* operator->()
     {
-      return mp;
+      return m_p;
     }
-  private:
-    T* mp{};
   };
-  // unique_ptr class template is a wrapper class for a pointer.
 */
 
 /*
-  #include <memory>
+  #include <memory>   // std::unique_ptr
   #include <string>
 
   class Myclass {
+  private:
+    std::string m_str;
   public:
     Myclass() = default;
 
-    Myclass(std::string str) : mx{ str } {}
+    Myclass(std::string str) : m_str{ str } 
+    {}
 
     ~Myclass()
     {
-      std::cout << "object in address = " << this << " has been deleted.\n";
+      std::cout << "object in address = " 
+                << this << " has been deleted.\n";
     }
 
     std::string& operator*()
     {
-      return mx;
+      return m_str;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
+    friend std::ostream& operator<<(std::ostream& os, 
+                                    const Myclass& mx)
     {
-      return os << myclass.mx;
+      return os << mx.m_str;
     }
-  private:
-    std::string mx;
   };
 
   int main()
   {
-    std::unique_ptr<std::string> a;	// default initalization
+    // ------------------------------------------
+
+    std::unique_ptr<std::string> up_str;
+    // default initalization
+
+    // ------------------------------------------
 
     {
-      std::unique_ptr<Myclass> upx(new Myclass{ "hello world" });
-      std::cout << *upx << '\n';	// output -> hello world
+      std::unique_ptr<Myclass> up_mx(new Myclass{ "hello world" });
+      std::cout << *up_mx << '\n';
+      // output -> hello world
     }
     // output ->
-    //	hello world
-    //	object in address = 00F8A370 has been deleted.
+    //  object in address = 0x25a55379340 has been deleted.
+
+    // ------------------------------------------
   }
 */
 
 /*
-  #include <memory>
+  #include <memory>   // std::unique_ptr
   #include <string>
 
   class Myclass {
+  private:
+    std::string m_str;
   public:
     Myclass() = default;
 
-    Myclass(std::string str) : mx{ str } {}
+    Myclass(std::string str) : m_str{ str } 
+    {}
 
     ~Myclass()
     {
-      std::cout << "object in address = " << this << " has been deleted.\n";
+      std::cout << "object in address = " 
+                << this << " has been deleted.\n";
     }
-  private:
-    std::string mx;
   };
 
   int main()
   {
-    using namespace std;
+    // -----------------------------------------------
 
-    unique_ptr<Myclass> p1;
-    unique_ptr<Myclass> p2{};
-    unique_ptr<Myclass> p3{ nullptr };
-    unique_ptr<Myclass> p4 = nullptr;
-    // These are all default initialized.
+    std::unique_ptr<Myclass> up_mx_1;
+    std::unique_ptr<Myclass> up_mx_2{};
+    std::unique_ptr<Myclass> up_mx_3{ nullptr };
+    std::unique_ptr<Myclass> up_mx_4 = nullptr;
+    // Those 4 lines are equivalent.
+    // default initialization
+
+    // -----------------------------------------------
 
     // if(p1.operator bool())
-    if (p1)
-      std::cout << "i am full\n";
+    if (up_mx_1)
+      std::cout << "up_mx_1 is full" << '\n';
     else
-      cout << "i am empty\n";
-    // output -> i am empty
+      std::cout << "up_mx_1 is empty" << '\n';
+    // output -> up_mx_1 is empty
 
-    if (p2 != nullptr)
-      std::cout << "i am full\n";
+    if (up_mx_1.operator bool())
+      std::cout << "up_mx_1 is full" << '\n';
     else
-      cout << "i am empty\n";
-    // output -> i am empty
+      std::cout << "up_mx_1 is empty" << '\n';
+    // output -> up_mx_1 is empty
+    
+    // -----------------------------------------------
 
-    if (!(p1 && p2 && p3 && p4))
-      std::cout << "all of them are empty\n";
+    if (up_mx_2 != nullptr)
+      std::cout << "up_mx_2 is full" << '\n';
+    else
+      std::cout << "up_mx_2 is empty" << '\n';
+    // output -> up_mx_2 is empty
+
+    // -----------------------------------------------
+
+    if (!(up_mx_1 && up_mx_2 && up_mx_3 && up_mx_4))
+      std::cout << "all of them are empty" << '\n';
     // output -> all of them are empty
 
+    // -----------------------------------------------
+
     {
-      unique_ptr<Myclass> p5{ new Myclass };
-      if (p5)
-        std::cout << "i am full\n";
+      std::unique_ptr<Myclass> up_mx_5{ new Myclass };
+
+      if (up_mx_5)
+        std::cout << "up_mx_5 is full" << '\n';
       else
-        cout << "i am empty\n";
-      // output
-      //	i am full
-      //	object in address = 00773590 has been deleted.
+        std::cout << "up_mx_5 is empty" << '\n';
+      // output -> up_mx_5 is full
     }
+    // output -> 
+    //  object in address = 0x281bddd3cc0 has been deleted.
+
+    // -----------------------------------------------
   }
 */
 
 /*
-  #include <memory>
-  #include <string>
-
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    ~Myclass()
-    {
-      std::cout << "object in address = " << this << " has been deleted.\n";
-    }
-
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
+  #include "myclass.hpp"
+  #include <memory>   // std::unique_ptr
 
   int main()
   {
-    using namespace std;
-
-    unique_ptr<Myclass> m1;
+    std::unique_ptr<Myclass> up;
 
     try {
-      *m1; // undefined behaviour
+      *up;   // undefined behaviour(UB)
     }
     catch(const std::exception& ex)
     {
-      cout << "exception caught : " << ex.what() << '\n';
+      std::cout << "exception caught : " 
+                << ex.what() << '\n';
     }
-    // not throwing an exception, it is undefined behaviour to dereference
-    // an empty unique_ptr object.
+    // dereferencing an empty std::unique_ptr object
+    // will NOT throw an exception, it is undefined behaviour(UB).
   }
 */
 
 /*
-  #include <memory>
-  #include <string>
+  // std::unique_ptr is a move only type.
+
+  #include "myclass.hpp"
+  #include <memory>   // std::unique_ptr
   #include <vector>
+  #include <utility>  // std::move
 
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    ~Myclass()
-    {
-      std::cout << "object in address = " << this << " has been deleted.\n";
-    }
-
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
 
   int main()
   {
-    using namespace std;
+    std::unique_ptr<Myclass> up1{ new Myclass{ "hello" } };
+    // output -> hello object has been created
 
-    unique_ptr<Myclass> p1{ new Myclass{"hello world"} };
-    // unique_ptr is a move only type
+    // ----------------------------------------------
 
-    unique_ptr<Myclass> p2 = p1;	// syntax error
-    // unique_ptr does nove have a copy constructor.
+    std::unique_ptr<Myclass> up2 = up1; // syntax error
+    // error: use of deleted function 
+    // 'std::unique_ptr(const std::unique_pt&)
 
-    unique_ptr<Myclass> p3;
-    p3 = p1;						// syntax error
-    // unique_ptr does nove have a copy assignment.
+    // std::unique_ptr's copy ctor is deleted.
 
-    vector <unique_ptr<Myclass>> myvec;
-    unique_ptr<Myclass> p4;
-    myvec.push_back(p4);			// syntax error
-    // push_back functions is using copy constructor
+    // ----------------------------------------------
 
+    std::unique_ptr<Myclass> up3;
+    up3 = up1;    // syntax error
+    // error: use of deleted function 
+    // 'std::unique_ptr::operator=(const std::unique_ptr&)
 
-    unique_ptr<Myclass> p5{ new Myclass{"Live show"} };
-    unique_ptr<Myclass> p6 = std::move(p5);	// legal
-    // move ctor has been used
+    // std::unique_ptr's copy assignment operator is deleted.
 
-    unique_ptr<Myclass> p7;
-    cout << (p6 ? "p6: full" : "p6: empty") << '\n';	// output -> p6: full
-    cout << (p7 ? "p7: full" : "p7: empty") << '\n';	// output -> p7: empty
+    // ----------------------------------------------
 
-    p7 = std::move(p6);
-    // move assignment has been used.
+    std::vector<std::unique_ptr<Myclass>> up_mx_vec;
+    std::unique_ptr<Myclass> up4;
 
-    cout << (p6 ? "p6: full" : "p6: empty") << '\n';	// output -> p6: empty
-    cout << (p7 ? "p7: full" : "p7: empty") << '\n';	// output -> p7: full
-    // because of p6 has been moved to p7 (its resources has been stolen!)
+    up_mx_vec.push_back(up4);   // syntax error
+    // error: use of deleted function 
+    // 'std::unique_ptr(const std::unique_ptr&) 
+
+    // "push_back" member function is calling copy constructor
+    // of std::unique_ptr class template.
+
+    // ---------------------------------------------
+
+    std::unique_ptr<Myclass> up5{ new Myclass{ "galaxy" }};
+    // output -> galaxy object has been created
+
+    std::unique_ptr<Myclass> up6 = std::move(up5);  
+    // std::unique_ptr's move ctor is called.
+
+    // ---------------------------------------------
+
+    std::unique_ptr<Myclass> up7;
+    std::unique_ptr<Myclass> up8{ new Myclass{ "universe" }};
+    // output -> universe object has been created
+
+    std::cout << (up7 ? "up7 = full" 
+                      : "up7 = empty") << '\n';	
+    // output -> up7: empty
+
+    std::cout << (up8 ? "up8 = full"
+                      : "up8 = empty") << '\n';
+    // output -> up8: full
+
+    // ---------------------------------------------
+
+    up7 = std::move(up8);
+    // std::unique_ptr's move assignment operator is called.
+
+    std::cout << (up7 ? "up7 = full" 
+                      : "up7 = empty") << '\n';	
+    // output -> up7: full
+
+    std::cout << (up8 ? "up8 = full"
+                      : "up8 = empty") << '\n';
+    // output -> up8: empty
+
+    // ---------------------------------------------
   }
 */
 
 /*
-  #include <memory>
-  #include <string>
-
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    ~Myclass()
-    {
-      std::cout << *this << " -> object has been deleted .\n";
-    }
-
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
+  #include "myclass.hpp"
+  #include <memory>   // std::unique_ptr
 
   int main()
   {
-    using namespace std;
+    std::cout << "[0] - main started\n";
 
-    unique_ptr<Myclass> up1{ new Myclass{"hello world"} };
-    unique_ptr<Myclass> up2{ new Myclass{"live in Izmir"} };
+    // ----------------------------------------------------
 
-    cout << "up1 : " << (up1 ? "full" : "empty") << '\n';	// output -> up1 : full
-    cout << "up2 : " << (up2 ? "full" : "empty") << '\n';	// output -> up2 : full
+    std::unique_ptr<Myclass> up1{ new Myclass{"world"} };
+    // output -> world object has been created
+    std::unique_ptr<Myclass> up2{ new Myclass{"galaxy"} };
+    // output -> galaxy object has been created
 
-    cout << *up1 << ' ' << *up2 << '\n';
-    // output -> hello world live in Izmir
+    std::cout << "up1 = " << (up1 ? "full" : "empty") << ", ";
+    std::cout << "up2 = " << (up2 ? "full" : "empty") << '\n';
+    // output -> up1 = full, up2 = full
+
+    std::cout << *up1 << ' ' << *up2 << '\n';
+    // output -> world galaxy
+
+    // ----------------------------------------------------
 
     up1 = std::move(up2);
-    // hello world -> object has been deleted .
+    // output -> world object has been deleted
     // up1 gave back its resources than steal up2's resources.
 
-    cout << "up1 : " << (up1 ? "full" : "empty") << '\n';	// output -> up1 : full
-    cout << "up2 : " << (up2 ? "full" : "empty") << '\n';	// output -> up2 : empty
+    std::cout << "up1 = " << (up1 ? "full" : "empty") << ", ";
+    std::cout << "up2 = " << (up2 ? "full" : "empty") << '\n';
+    // output -> up1 = full, up2 = empty
 
-    cout << "main continues\n";
+    // ----------------------------------------------------
 
-    // output -> live in Izmir -> object has been deleted .
-    // up1 that has stole up2's resource, will gave its resources (deleted) at the end of the main scope.
+    std::cout << "[1] - main ends\n";
   }
+  // output -> galaxy object has been deleted
 */
 
 /*
+  #include "myclass.hpp"
   #include <memory>
-  #include <string>
   #include <vector>
-
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    ~Myclass()
-    {
-      std::cout << *this << " -> object has been deleted .\n";
-    }
-
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
 
   int main()
   {
-    using namespace std;
+    std::unique_ptr<Myclass> up_mx{ new Myclass{"world"} };
+    std::vector<std::unique_ptr<Myclass>> up_mx_vec;
 
-    unique_ptr<Myclass> up1{ new Myclass{"hello world"} };
-    unique_ptr<Myclass> up2{ new Myclass{"live in Izmir"} };
-
-
-    vector<unique_ptr<Myclass>> myvec;
-    myvec.reserve(20);
-
-    //	myvec.push_back(up1);			// syntax error -> copy overload will be called.
-    myvec.push_back(std::move(up1));	// legal -> move overload will be called.
+    up_mx_vec.push_back(std::move(up_mx));
+    // "push_back(std::unique_ptr<Myclass>&&)" overload called.
+    // which will call std::unique_ptr's move ctor.
   }
 */
 
 /*
-  #include <memory>
-  #include <string>
+  #include "myclass.hpp"
+  #include <memory>   // std::unique_ptr
 
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    ~Myclass()
-    {
-      std::cout << *this << " -> object has been deleted .\n";
-    }
-
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
-
-
-  void func(std::unique_ptr<Myclass>);
+  void func(std::unique_ptr<Myclass>){}
 
   std::unique_ptr<Myclass> foo()
   {
-    // code
-    return new{ "try another" };
-    // also not valid becuase of the explicit ctor
+    return new{ "explicit constructor" }; // syntax error
+    // error: expected type-specifier before '{' token
   }
 
   int main()
   {
-    using namespace std;
+    // ----------------------------------------------------
 
-    unique_ptr<Myclass> up = new Myclass{ "hello world!" };
+    std::unique_ptr<Myclass> up1 = new Myclass{ "copy init" };
     // syntax error (copy initialization)
-    // becuase of the [new Myclass{"hello world!}] expression
-    // returns a pointer to Myclass object (Myclass*),
-    // and because of unique_ptr's one parameter ctor is an explicit ctor,
-    // implicit conversion from T* to unique_ptr<T>  is not valid.
+    //  error: conversion from 'Myclass*' to non-scalar type
+    //  'std::unique_ptr<Myclass>' requested
 
-    unique_ptr<Myclass> up1 = static_cast<unique_ptr<Myclass>>(new Myclass{ "hello world!" });		// legal
-    // explicit conversion from T* to unique_ptr<T> with static_cast
+    // "new Myclass{ "copy init" }" expression 
+    // returns a pointer to Myclass object (Myclass*)
+    // and because of unique_ptr's one parameter ctor
+    // is an explicit ctor, 
+    // implicit conversion from T* to unique_ptr<T>
+    // will cause a syntax error.
 
-    unique_ptr<Myclass> up2(new Myclass{ "hello world!" });
-    // direct initialization is	valid
-    unique_ptr<Myclass> up3{ new Myclass{ "hello world!" } };
-    // value initialization is also	valid
+    // ----------------------------------------------------
 
+    using up_type = std::unique_ptr<Myclass>;
 
-    func(new Myclass{ "lets try" });	// also not valid because of ctor is explicit.
-    //E0415	no suitable constructor exists to convert
-    // from "Myclass *" to "std::unique_ptr<Myclass, std::default_delete<Myclass>>"
+    up_type up2 = static_cast<up_type>(new Myclass{ "up2" });
 
-    func(unique_ptr<Myclass>{new Myclass{ "this is valid" }});	// legal
+    // explicit conversion from from Myclass* to 
+    // std::unique_ptr<Myclass> with static_cast
+
+    // ----------------------------------------------------
+
+    std::unique_ptr<Myclass> up3(new Myclass{ "up3" });
+    // direct initialization (VALID)
+
+    // ----------------------------------------------------
+
+    std::unique_ptr<Myclass> up4{ new Myclass{ "up4" } };
+    // value initialization. (VALID)
+
+    // ----------------------------------------------------
+
+    func(new Myclass{ "syntax error" });    // syntax error
+    // because of explicit constructor of std::unique_ptr
+    // explicit conversion from Myclass* to std::unique_ptr<Myclass>
+    // will cause a syntax error.
+
+    // ----------------------------------------------------
+
+    func(std::unique_ptr<Myclass>{ new Myclass{ "func" } });	
+
+    // ----------------------------------------------------
   }
 */
 
 /*
   #include <memory>
-
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    ~Myclass()
-    {
-      std::cout << *this << " -> object has been deleted .\n";
-    }
-
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
+  #include "myclass.hpp"
 
   int main()
   {
-    auto dpx = new Myclass{ "Hello World" };
-    // dpx's type is Myclass*
+    auto p_mx = new Myclass{ "hello world" };
+    // p_mx's data type is Myclass*
 
-    std::unique_ptr<Myclass> up1{ dpx };
-    std::unique_ptr<Myclass> up2{ dpx };	// undefined behaviour
+    // ------------------------------------------------
 
-    std::cout << *up1 << '\n';
-    std::cout << *up2 << '\n';
+    std::unique_ptr<Myclass> up1{ p_mx };   
+    // first assignment VALID
 
-    (void)getchar();
-    // double deletion will be happen (run-time error)
+    std::unique_ptr<Myclass> up2{ p_mx };
+    // second assignment undefined behaviour(UB)
+
+    // at the end of the scope, because of both 
+    // unique_ptr objects will try to delete the same object
+    // double deletion will be happen (undefined behaviour)
+
+    // ------------------------------------------------
   }
 */
 
 /*
-  #include <memory>
+  #include "myclass.hpp"
+  #include <memory>   // std::unique_ptr, std::make_unique
+  #include <utility>  // std::forward
   #include <vector>
-
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
-
-  void func(std::unique_ptr<Myclass>);
-
-  std::unique_ptr<Myclass> foo()
-  {
-    return MakeUnique<Myclass>("hey now");
-  }
-  // mandatory copy ellision
-
 
   template <typename T, typename ...Args>
-  std::unique_ptr<T> MakeUnique(Args&& ...args)
+  std::unique_ptr<T> Make_Unique(Args&&... args)
   {
-    return std::unique_ptr<T>{new T(std::forward<Args>(args)...)};
+    return std::unique_ptr<T>{ new T(std::forward<Args>(args)...)};
   }
 
+  std::unique_ptr<Myclass> foo()
+  {
+    return Make_Unique<Myclass>("foo");
+  }
+  
   int main()
   {
-    auto uptr = MakeUnique<Myclass>("hello world");
+    // --------------------------------------------------
 
-    func(MakeUnique<Myclass>("Live from Izmir"));
+    auto up1 = Make_Unique<Myclass>("world");
+    // output -> world object has been created
+    // mandatory copy ellision
 
+    auto up2 = foo();
+    // output -> foo object has been created
+    // mandatory copy ellision
 
-    std::vector<std::unique_ptr<Myclass>> myvec;
-    myvec.reserve(100);
+    // --------------------------------------------------
 
-    myvec.push_back(std::unique_ptr<Myclass>{});
-    myvec.push_back(std::make_unique<Myclass>("hello again"));
-    myvec.emplace_back(new Myclass{ "unique_ptr's constructor." });
+    std::vector<std::unique_ptr<Myclass>> up_mx_vec;
+
+    up_mx_vec.push_back(std::unique_ptr<Myclass>{});
+
+    up_mx_vec.push_back(std::make_unique<Myclass>("galaxy"));
+    // output -> galaxy object has been created
+    up_mx_vec.emplace_back(new Myclass{ "universe" });
+    // output -> universe object has been created
+
+    // --------------------------------------------------
   }
 */
 
 /*
-  #include <memory>
-
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    ~Myclass()
-    {
-      std::cout << *this << " object has been deleted\n";
-    }
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
+  #include <memory>   // std::make_unique
+  #include "myclass.hpp"
 
   int main()
   {
-    using namespace std;
+    auto up = std::make_unique<Myclass>("world");
 
-    auto upx = make_unique<Myclass>("hello world");
-    std::cout << *upx << '\n';	// output -> hello world
+    std::cout << *up << '\n';   // output -> world
 
-    upx = new Myclass{ "hello galaxy" };	// syntax error
-    // unique_ptr does not have an assignment operator= function
+    // --------------------------------------------------
+
+    up = new Myclass{ "galaxy" };   // syntax error
+    // error: no match for 'operator=' (operand types are 
+    // 'std::unique_ptr<Myclass, std::default_delete<Myclass>>' 
+    // and 'Myclass*')
+
+    // std::unique_ptr does not have an 
+    // assignment operator= function 
     // which gets T* as a parameter
 
-    upx.reset();
-    // output -> hello world object has been deleted
-    // reset() functions job is calling unique_ptr objects destructor immediately
-    // before scope ends.
+    // --------------------------------------------------
 
-    cout << "main continues\n";
-  }
-*/
-
-/*
-  #include <memory>
-
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    ~Myclass()
     {
-      std::cout << *this << " object has been deleted\n";
+      std::cout << "[0] - inner scope started\n";
+
+      auto up1 = std::make_unique<Myclass>("universe");
+      up1.reset();
+      // "reset" member function will call 
+      // wrapped object's destructor
+
+      std::cout << "[1] - inner scope ended\n";
     }
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
-
-  int main()
-  {
-    using namespace std;
-
-    auto upx = make_unique<Myclass>("hello world");
-
-    upx.reset();
-    upx.reset(nullptr);
-    upx = nullptr;
-    upx = unique_ptr<Myclass>{};
-    upx = {};
-    // Those 5 lines are same, they both delete the object inside unique_ptr
-  }
-*/
-
-/*
-  #include <memory>
-
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    ~Myclass()
-    {
-      std::cout << *this << " object has been deleted\n";
-    }
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
-
-  int main()
-  {
-    using namespace std;
-
-    auto upx = make_unique<Myclass>("hello world");
-    cout << *upx << '\n';	// output -> hello world
-
-    upx.reset(new Myclass{"hello galaxy"});
-    // output -> hello world object has been deleted
-    // reset(Myclass* new_ptr) member function has been used to delete old object that it owns,
-    // and get ownership of the new Myclass* object.
-
-    cout << *upx << '\n';	// output -> hello galaxy
-  }
-*/
-
-/*
-  #include <memory>
-
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    ~Myclass()
-    {
-      std::cout << *this << " object has been deleted\n";
-    }
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
-
-  int main()
-  {
-    using namespace std;
-
-    auto upx = make_unique<Myclass>("hello world");
-    cout << "upx = " << (upx ? "full" : "empty") << "\n";	// output -> upx = full
-
-    auto ptr = upx.release();
-    // ptr's type will be Myclass*; which is, the pointer that unique_ptr wrapped before.
-
-    cout << "upx = " << (upx ? "full" : "empty") << "\n";	// output -> upx = empty
-
-    // Because of ptr now holds the Myclass* object.
-    // It will not be deleted at the end of the scope.
-    // It will exactly act like raw pointer so we manually need to call delete.
-
-    delete ptr;
-    // output -> hello world object has been deleted
-  }
-*/
-
-/*
-  #include <memory>
-
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    ~Myclass()
-    {
-      std::cout << *this << " object has been deleted\n";
-    }
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
-
-  int main()
-  {
-    using namespace std;
-
-    auto upx = make_unique<Myclass>("hello world");
-    cout << "upx = " << (upx ? "full" : "empty") << "\n";	// output -> upx = full
-
-    auto ptr = upx.get();
-    // ptr's type is Myclass*
-
-    cout << "upx = " << (upx ? "full" : "empty") << "\n";	// output -> upx = full
-    // upx is still wrapping a pointer and it has still a value ("hello world") inside it.
-
-    delete ptr;
-    // output -> hello world object has been deleted
-    // when we delete the raw pointer (Myclass*) that we get with get() member function.
-    // upx unique_ptr still has the same pointer that has been deleted.
-    // when main() scope end unique_ptr will delete the pointer but it will be the second time.
-    // double deletion error(run-time error) will be happen.
-
-    (void)getchar();
-  }
-*/
-
-/*
-  #include <memory>
-
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    ~Myclass()
-    {
-      std::cout << *this << " object has been deleted\n";
-    }
-    std::string& operator*()
-    {
-      return mx;
-    }
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
-
-  int main()
-  {
-    using namespace std;
-
-    auto upx = make_unique<Myclass>("hello world");
-    cout << "upx = " << (upx ? "full" : "empty") << "\n";	// output -> upx = full
-
-    auto ptr = upx.get();
-    // ptr's type is Myclass*
-
-    unique_ptr<Myclass> upx_2{ ptr };
-    // When we create a second unique_ptr
-    // with the raw pointer that we get from get() member function.
-    // It will cause double deletion error when the scope ends.
-    // Both upx and upx_2 are pointing the same location.
-  }
-*/
-
-/*
-  #include <memory>
-
-  class Myclass {
-  public:
-    Myclass() = default;
-
-    Myclass(std::string str) : mx{ str } {}
-
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
-    {
-      return os << myclass.mx;
-    }
-  private:
-    std::string mx;
-  };
-
-  int main()
-  {
-    using namespace std;
-
-    auto upx = make_unique<Myclass>("hello world");
-
-    cout << "Myclass objects address is = " << upx.get() << '\n';
-    cout << "Myclass objects address is = " << upx << '\n';
-    // Those 2 lines are same
-    cout << "unique_ptr<Myclass> objects address is " <<  &upx << '\n';
-
     // output ->
-    //	Myclass objects address is = 013935D8
-    //	Myclass objects address is = 013935D8
-    //	unique_ptr<Myclass> objects address is 00DEFEAC
+    //  [0] - inner scope started
+    //  universe object has been created
+    //  universe object has been deleted
+    //  [1] - inner scope ended
+
+    // --------------------------------------------------
+  }
+*/
+
+/*
+  #include <memory>   // std::make_unique, std::unique_ptr
+  #include "myclass.hpp"
+
+  int main()
+  {
+    {
+      std::cout << "[0] - inner scope started\n";
+
+      auto up1 = std::make_unique<Myclass>("up1");
+      up1.reset();
+
+      std::cout << "[1] - inner scope ended\n";
+    }
+    // output ->
+    //  [0] - inner scope started
+    //  up1 object has been created
+    //  up1 object has been deleted
+    //  [1] - inner scope ended
+
+    {
+      std::cout << "[0] - inner scope started\n";
+
+      auto up2 = std::make_unique<Myclass>("up2");
+      up2.reset(nullptr);
+      
+      std::cout << "[1] - inner scope ended\n";
+    }
+    // output ->
+    //  [0] - inner scope started
+    //  up2 object has been created
+    //  up2 object has been deleted
+    //  [1] - inner scope ended
+
+    {
+      std::cout << "[0] - inner scope started\n";
+
+      auto up3 = std::make_unique<Myclass>("up3");
+      up3 = nullptr;
+      
+      std::cout << "[1] - inner scope ended\n";
+    }
+    // output ->
+    //  [0] - inner scope started
+    //  up3 object has been created
+    //  up3 object has been deleted
+    //  [1] - inner scope ended
+
+    {
+      std::cout << "[0] - inner scope started\n";
+
+      auto up4 = std::make_unique<Myclass>("up4");
+      up4 = std::unique_ptr<Myclass>{};
+      
+      std::cout << "[1] - inner scope ended\n";
+    }
+    // output ->
+    //  [0] - inner scope started
+    //  up4 object has been created
+    //  up4 object has been deleted
+    //  [1] - inner scope ended
+
+    {
+      std::cout << "[0] - inner scope started\n";
+
+      auto up5 = std::make_unique<Myclass>("up5");
+      up5 = {};
+      
+      std::cout << "[1] - inner scope ended\n";
+    }
+    // output ->
+    //  [0] - inner scope started
+    //  up5 object has been created
+    //  up5 object has been deleted
+    //  [1] - inner scope ended
+  }
+*/
+
+/*
+  #include <memory>   // std::make_unique
+  #include "myclass.hpp"
+
+  int main()
+  {
+    std::cout << "[0] - main started\n";
+
+    {
+      std::cout << "[0] - inner scope started\n";
+
+      auto up = std::make_unique<Myclass>("world");
+      // output -> world object has been created
+
+      std::cout << *up << '\n';   
+      // output -> world
+
+      up.reset(new Myclass{ "galaxy" });
+      // output -> galaxy object has been created
+      // output -> world object has been deleted
+
+      std::cout << *up << '\n';
+      // output -> galaxy
+
+      std::cout << "[1] - inner scope ended\n";
+    }
+    // output -> galaxy object has been deleted
+
+    std::cout << "[1] - main ended\n";
+  }
+*/
+
+/*
+  #include <memory>   // std::make_unique
+  #include "myclass.hpp"
+
+  int main()
+  {
+    std::cout << "[0] - main started\n";
+
+    // ------------------------------------------------
+
+    auto up = std::make_unique<Myclass>("world");
+    // output -> world object has been created
+
+    std::cout << "up = " << (up ? "full" : "empty") << "\n";
+    // output -> up = full
+
+    // ------------------------------------------------
+    
+    auto p_mx = up.release();
+    // p_mx's type is Myclass* 
+    // pointer that "up" unique_ptr object holds
+
+    std::cout << "up = " << (up ? "full" : "empty") << "\n";
+    // output -> upx = empty
+
+    // ------------------------------------------------
+
+    // "p_mx" is a raw pointer that is pointing
+    // to a dynamically allocated Myclass object on heap.
+    // and because of std::unique_ptr object's "release"
+    // member function is called, it will not delete the object
+    // at the end of the scope.
+    // it need to be deleted manually.
+
+    delete p_mx;
+    // output -> world object has been deleted
+
+    // ------------------------------------------------
+
+    std::cout << "[1] - main ended\n";
   }
 */
 
 /*
   #include <memory>
+  #include "myclass.hpp"
 
-  class Myclass {
-  public:
-    Myclass() = default;
+  int main()
+  {
+    // ------------------------------------------------
 
-    Myclass(std::string str) : mx{ str } {}
+    auto up = std::make_unique<Myclass>("world");
+    // output -> world object has been created
 
-    friend std::ostream& operator<<(std::ostream& os, const Myclass& myclass)
+    std::cout << "up = " << (up ? "full" : "empty") << "\n";
+    // output -> upx = full
+
+    // ------------------------------------------------
+
+    auto p_mx = up.get();
+    // "p_mx"'s data type is Myclass*
+
+    // "up" unique_ptr object is still holding the pointer
+    // that "p_mx" is pointing to.
+
+    std::cout << "up = " << (up ? "full" : "empty") << "\n";
+    // output -> up = full
+
+    // ------------------------------------------------
+
+    delete p_mx;  // undefined behaviour(UB)
+
+    // because of "up" unique_ptr object is still holding
+    // the pointer that "p_mx" is pointing to.
+    // double deletion will be happen.
+    // which is undefined behaviour(UB)
+
+    // ------------------------------------------------
+  }
+*/
+
+/*
+  #include <memory>   // std::make_unique, std::unique_ptr
+  #include "myclass.hpp"
+
+  int main()
+  {
+    auto up1 = std::make_unique<Myclass>("world");
+
+    std::cout << "up1 = " << (up1 ? "full" : "empty") << "\n";
+    // output -> up1 = full
+
+    auto p_mx = up1.get();
+
+    std::unique_ptr<Myclass> up2{ p_mx };   
+    // undefined behaviour(UB)
+
+    // both "up1" and "up2" unique_ptr objects are holding
+    // the same pointer that "p_mx" is pointing to.
+    // at the end of the scope, both unique_ptr objects
+    // will try to delete the same object.
+    // double deletion will be happen.
+    // which is undefined behaviour(UB)
+  }
+*/
+
+/*
+  #include <memory>
+  #include "myclass.hpp"
+
+  int main()
+  {
+    auto up = std::make_unique<Myclass>("world");
+
+    // -----------------------------------------------
+
+    std::cout << "Myclass object's address = " 
+              << up.get() << '\n';
+    // output -> Myclass object's address = 0x29425884cf0
+              
+    std::cout << "Myclass object's address = " 
+              << up << '\n';
+    // output -> Myclass object's address = 0x29425884cf0
+
+    // Those 2 lines are equivalent.
+
+    // -----------------------------------------------
+
+    std::cout << "std::unique_ptr<Myclass> object's address = " 
+              <<  &up << '\n';
+    // output -> 
+    //  std::unique_ptr<Myclass> object's address = 0xba2d7ffa98
+
+    // -----------------------------------------------
+  }
+*/
+
+/*
+  #include <memory>
+  #include "myclass.hpp"
+
+  int main()
+  {
     {
-      return os << myclass.mx;
+      auto up1 = std::make_unique<Myclass>("world");
+      auto up2 = std::move(up1);
+
+      std::cout << "up1 = " << (up1 ? "full" : "empty") << '\n';
+      // output -> up1 = empty
+      std::cout << "up2 = " << (up2 ? "full" : "empty") << '\n';
+      // output -> up2 = full
     }
-  private:
-    std::string mx;
+  }
+*/
+
+/*
+  #include <memory>
+  #include <string>
+
+  int main()
+  {
+    using namespace std;
+
+    std::unique_ptr<std::string> up_str;
+
+    auto def_deleter = up_str.get_deleter();
+    // "def_deleter"'s type is std::default_delete<std::string>
+  }
+*/
+
+/*
+  #include <memory>
+  #include <string>
+
+  struct Str_Deleter {
+  public:
+    void operator()(std::string* p_str)
+    {
+      std::cout << "object in address = " << p_str 
+                << " has been deleted.\n";
+      delete p_str;
+    }
   };
 
   int main()
   {
-    using namespace std;
-
-    auto upx = make_unique<Myclass>("hello world");
-
-    auto upy = std::move(upx);
-    auto upy(upx.release());
-    // Those 2 lines are same.
-
-    // Because of the Myclass object that holds "hello world" is on the heap
-    // [dynamically allocated]
-    // because of it's creation we use make_unique() factory function
-    // which created object on the heap.
-    // auto upy(upx.release()); statement will act like
-    // auto upy(new Myclass{"hello world});
-  }
-*/
-
-/*
-  #include <memory>
-  #include <string>
-
-  int main()
-  {
-    using namespace std;
-
-    unique_ptr<string> ups;
-
-    auto fd = ups.get_deleter();
-    // fd's type is std::default_delete<std::string>
-  }
-*/
-
-/*
-  #include <memory>
-  #include <string>
-
-  struct SDeleter {
-  public:
-    void operator()(std::string* p)
-    {
-      std::cout << "the object in address: " << p << " has been deleted.\n";
-      delete p;
-    }
-  };
-
-  int main()
-  {
-    using namespace std;
-
-    std::cout << "main has been started\n";
+    std::cout << "[0] - main started\n";
 
     {
-      unique_ptr<string, SDeleter> uptr{ new string {"hello world"} };
+      std::unique_ptr<std::string, Str_Deleter> up_str{ 
+        new std::string {"hello"} };
+      // output ->
+      //  object in address = 0x21634980fc0 has been deleted.
     }
 
-    std::cout << "main continues\n";
-    // output ->
-    //	main has been started
-    //	the object in address : 0123AA38 has been deleted.
-    //	main continues
+    std::cout << "[1] - main ended\n";
   }
 */
 
@@ -1783,27 +1689,33 @@
   #include <memory>
   #include <string>
 
-  void mydeleter(std::string* p)
+  void fn_deleter(std::string* p_str)
   {
-    std::cout << "mydeleter function has been called\n";
-    delete p;
+    std::cout << "fn_deleter has been called.\n";
+    std::cout << "object in address = " << p_str 
+              << " has been deleted.\n";
+    delete p_str;
   }
 
   int main()
   {
-    using namespace std;
+    std::cout << "[0] - main started\n";
 
-    std::cout << "main has been started\n";
     {
-      unique_ptr<string, decltype(&mydeleter)> uptr{ new string {"hello world"}, &mydeleter };
-      unique_ptr<string, void(*)(string*)> uptr2{ new string {"from Izmir"}, &mydeleter };
+      std::unique_ptr<std::string, decltype(&fn_deleter)> up_str1{ 
+        new std::string{"world"}, &fn_deleter };
+      // output ->
+      //  fn_deleter has been called.
+      //  object in address = 0x20528242f20 has been deleted.
+      
+      std::unique_ptr<std::string, void(*)(std::string*)> up_str2{ 
+        new std::string{"galaxy"}, &fn_deleter };
+      // output ->
+      //  fn_deleter has been called.
+      //  object in address = 0x20528242ef0 has been deleted.
     }
-    std::cout << "main continues\n";
-    // output ->
-    //	main has been started
-    //	mydeleter function has been called
-    //	mydeleter function has been called
-    //	main continues
+
+    std::cout << "[1] - main ended\n";
   }
 */
 
@@ -1813,32 +1725,51 @@
 
   int main()
   {
-    using namespace std;
+    std::cout << "[0] - main started\n";
 
-    auto fdel = [](string* p) {
-      std::cout << "fdel lambda objects operator() function has been called\n";
-      delete p;
+    auto fn_deleter = [](std::string* p_str) {
+      std::cout << "fn_deleter function has been called\n";
+      std::cout << "object in address = " << p_str 
+                << " has been deleted.\n";
+      delete p_str;
     };
 
-    std::cout << "main has been started\n";
     {
-      unique_ptr<string, decltype(fdel)> uptr{ new string {"hello world"}, fdel };
-      // before C++20 because of stateless lambda objects does not have default ctor.
+      // ------------------------------------------------
 
-      unique_ptr<string, decltype(fdel)> uptr{ new string {"hello world"} };
-      // after C++20 because of stateless lambda object does have default ctor.
-      // before C++20 -> syntax error
+      std::unique_ptr<std::string, decltype(fn_deleter)> up_str1{ 
+        new std::string{"world"}, fn_deleter };
+      // output ->
+      //  fn_deleter function has been called
+      //  object in address = 0x1aae9e13b70 has been deleted.
+      
+      // before C++20 because of stateless lambda object 
+      // does not have default ctor, we need to pass the
+      // lambda object as a parameter to the unique_ptr ctor.
+
+      // ------------------------------------------------
+
+      std::unique_ptr<std::string, decltype(fn_deleter)> up_str2{ 
+        new std::string {"galaxy"} };
+      // output ->
+      //  fn_deleter function has been called
+      //  object in address = 0x1aae9e13c30 has been deleted.
+
+      // since C++20 stateless lambda object have default ctor.
+      // before C++20 syntax error will be occured.
+
+      // ------------------------------------------------
     }
-    std::cout << "main continues\n";
+
+    std::cout << "[1] - main ended\n";
   }
 */
 
 /*
-  Since C++20
-  STATELESS lambda expressions
-    1. does have default constructor
-    2. does have copy assignment function
-    3. can be used in unevaluated context
+  Since C++20 STATELESS lambda expressions,
+    - does have default constructor
+    - does have copy assignment operator function
+    - can be used in unevaluated context
 */
 
 /*
@@ -1847,53 +1778,69 @@
 
   int main()
   {
-    using namespace std;
+    std::cout << "[0] - main started\n";
 
-    std::cout << "main has been started\n";
     {
-      unique_ptr < string, decltype([](string* p) {
-        cout << "stateless lambda expression in unevaluated context\n";
-        delete p;
-        }) > uptr{ new string {"hello world"} };
+      std::unique_ptr<std::string, 
+                      decltype([](std::string* p_str) {
+          std::cout << "stateless lambda expression used "
+                        "in unevaluated context\n";
+          delete p_str;
+        }) > up_str{ new std::string{ "world" } };      
     }
-    std::cout << "main continues\n";
-    // output ->
-    //	main has been started
-    //	stateless lambda expression in unevaluated context
-    //	main continues
+    std::cout << "[1] - main ended\n";
   }
+  // output ->
+  //  [0] - main started
+  //  stateless lambda expression used in unevaluated context
+  //  [1] - main ended
 */
 
 /*
-  #include <memory>
+  #include <cstdio>   // std::fopen, std::fprintf, std::fclose
   #include <string>
-  #include <cstdio>
-  #define _CRT_SECURE_NO_WARNINGS
 
   int main()
   {
-    using namespace std;
+    // ----------------------------------------------
+
+    // C style file handling
+    {
+      FILE* fp = std::fopen("out.txt", "w");
+
+      std::fprintf(fp, "world\n");
+      std::fprintf(fp, "galaxy\n");
+
+      std::fclose(fp);
+    }
+    // - closing file can be forgotten.
+    // - exception can be thrown before closing the file.
+
+    // ----------------------------------------------
+
+    using f_closer_t = decltype([](FILE* f){ std::fclose(f); });
 
     {
-      FILE* f = fopen("out.txt", "w");
+      std::unique_ptr<FILE, f_closer_t> up_file{ 
+        std::fopen("out.txt", "a") 
+      };
 
-      fprintf(f, "hello world\n");
-      fprintf(f, "from Izmir\n");
-
-      fclose(f);
-      // 1. we can forget to close the file.
-      // 2. before fclose() function called some exception can be thrown.
+      std::fprintf(up_file.get(), "universe\n");
     }
 
-    using file_closer = decltype([](FILE* fp) {fclose(fp); });
-    unique_ptr<FILE, file_closer> uptr{ fopen("out.txt", "w") };
+    // ----------------------------------------------
   }
+  // out.txt ->
+  //  world
+  //  galaxy
+  //  universe
 */
 
 /*
-  #include <memory>
+  #include <memory>   // std::unique_ptr
   #include <string>
 
+  // primary template
   template <typename T>
   class Myclass {
   public:
@@ -1903,6 +1850,7 @@
     }
   };
 
+  // partial specialization for C-style arrays
   template <typename T>
   class Myclass<T[]> {
   public:
@@ -1912,402 +1860,552 @@
     }
   };
 
+  // primary template
   template <typename T>
-  struct DefaultDelete {
+  struct Default_Delete {
     void operator()(T* p)
     {
       delete p;
     }
   };
 
+  // partial specialization for C-style arrays
   template <typename T>
-  struct DefaultDelete<T[]> {
+  struct Default_Delete<T[]> {
     void operator()(T* p)
     {
-      delete[] p;
+      delete[] p;   // array delete
     }
   };
 
   int main()
   {
-    using namespace std;
+    // ------------------------------------------------
 
-    Myclass<int> m1;
-    Myclass<int[]> m2;
-    // output ->
-    //	primary template
-    //	array partial specialization
+    Myclass<int> m1;    
+    // output -> primary template
+    Myclass<int[]> m2;  
+    // output -> array partial specialization
 
-    auto fdel = [](string* p) {delete[] p; };
+    // ------------------------------------------------
 
-    {
-      unique_ptr<string> uptr{ new string[100] };
-      // Error using default_deleter for an array.
+    auto fn_delete = [](std::string* p_str){ delete[] p_str; };
 
-      unique_ptr<string, decltype(fdel)> uptr_2{ new string[100] };
-      // Valid but not a good solution
-    }
+    std::unique_ptr<std::string, decltype(fn_delete)> up_str{ 
+      new std::string[100] };
+    // VALID but not a good solution.
+  
+    // ------------------------------------------------
 
-    // unique_ptr has a partial specialization for array
-    // 2nd template argument default_delete also have array partial specialization.
+    // std::unique_ptr has a partial specialization C-style arrays.
+    // 2nd template parameter default_delete also have a 
+    // C-style array partial specialization.
 
-    unique_ptr<string[]> uptr_3(new string[100]);
-    // There aren't any operator* and operator-> functions for array specialization.
-    // There is an operator[] function for array specialization.
+    std::unique_ptr<std::string[]> up_str2{ new std::string[100] };
+    // VALID and a good solution.
 
-    for (int i{}; i < 100; ++i) {
-      uptr_3[i];	// operator[] function.
-    }
+    // ------------------------------------------------
+
+    // "operator*" and "operator->" member functions 
+    // are not available in 
+    // C-style array partial specialization's interface.
+
+    // "operator[]" member function is available in 
+    // C-style array partial specialization's inteface.
+
+    for (int i{}; i < 100; ++i)
+      up_str2[i];
+
+    // ------------------------------------------------
   }
 */
 
 /*
-  #include <vector>
-  #include <memory>
+  #include <vector>     
+  #include <memory>       // std::unique_ptr
   #include <string>
-  #include <algorithm>
+  #include <algorithm>    // std::sort
 
   int main()
   {
-    using namespace std;
+    std::vector<std::unique_ptr<std::string>> up_str_vec;
 
-    vector<unique_ptr<string>> vec;
-    vec.emplace_back(new string{"hello world"});
-    vec.emplace_back(new string{"hello galaxy"});
-    vec.emplace_back(new string{"hello universe"});
-    vec.emplace_back(new string{"hello matrix"});
+    up_str_vec.emplace_back(new std::string{"cccc"});
+    up_str_vec.emplace_back(new std::string{"bbbb"});
+    up_str_vec.emplace_back(new std::string{"aaaa"});
+    up_str_vec.emplace_back(new std::string{"dddd"});
 
-    sort(vec.begin(), vec.end());
-    // sorted by pointer addresses not the strings inside pointers.
+    // ---------------------------------------------------
 
-    for (const auto& up : vec)
-      cout << *up << '\n';
+    std::sort(up_str_vec.begin(), up_str_vec.end());
+    // sorting by pointer addresses 
+    // not the strings inside pointers.
+
+    for (const auto& up_str : up_str_vec)
+      std::cout << *up_str << " - " << up_str << '\n';
     // output ->
-    //	hello world
-    //	hello matrix
-    //	hello galaxy
-    //	hello universe
+    //  bbbb - 0x1d13a8957b0
+    //  dddd - 0x1d13a8958d0
+    //  aaaa - 0x1d13a895930
+    //  cccc - 0x1d13a895a20
 
-    sort(vec.begin(), vec.end(), [](const auto& p1, const auto& p2){
-      return *p1 < *p2;
-      });
+    std::cout << '\n';
 
-    for (const auto& up : vec)
-      cout << *up << '\n';
+    // ---------------------------------------------------
+
+    std::sort(up_str_vec.begin(), up_str_vec.end(), 
+              [](const auto& p_str1, const auto& p_str2){
+                return *p_str1 < *p_str2;
+              });
+
+    for (const auto& up_str : up_str_vec)
+      std::cout << *up_str << " - " << up_str << '\n';
     // output ->
-    //	hello galaxy
-    //	hello matrix
-    //	hello universe
-    //	hello world
+    //  aaaa - 0x1d13a895930
+    //  bbbb - 0x1d13a8957b0
+    //  cccc - 0x1d13a895a20
+    //  dddd - 0x1d13a8958d0
+
+    // ---------------------------------------------------
   }
 */
 
 /*
-  #include <memory>
+  #include <memory>   // std::unique_ptr
   #include <string>
 
   class Myclass {
-    Myclass(std::string name, int age);
+    Myclass(std::string str, int num);
   };
 
-  std::unique_ptr<Myclass> make_myclass(std::string name, int age)
+  std::unique_ptr<Myclass> make_Myclass(std::string str, int num)
   {
-    return std::make_unique<Myclass>(name, age);
+    return std::make_unique<Myclass>(str, num);
+    // mandatory copy ellision
   }
 
   int main()
   {
-    auto up = make_myclass("hello", 28);
-    // we can create our own factory functions.
+    auto up_mx = make_Myclass("world", 22);
+    // make_Myclass is a factory function
   }
 */
 
 /*
-  #include <memory>
+  #include <memory>   // std::unique_ptr, std::make_unique
   #include <string>
 
-  void sink(std::unique_ptr<std::string> up)
-  {
+  using namespace std;
 
-  }
-  // sink functions
-  // takes an argument, use that argument and
+  // ---------------------------------------------------
+
+  void sink(unique_ptr<string> up_str){}
+
+  // sink functions, takes an argument use it and
   // its life will be end after using it.
 
-  std::unique_ptr<std::string> pass_through(std::unique_ptr<std::string> up)
-  {
-    // code here
-    std::cout << "length: " << up->length() << '\n';
-    std::cout << "string: " << *up << '\n';
-    // code here
+  // ---------------------------------------------------
 
-    return up;
+  unique_ptr<string> pass_through(unique_ptr<string> up_str)
+  {
+    std::cout << "length = " << up_str->length() << ", ";
+    std::cout << "string = " << *up_str << '\n';
+
+    return up_str;
   }
-  // pass_through functions
-  // takes an argument, do some operations
-  // returns that argument.
+  // pass through functions, takes an argument, 
+  // do some operations on it and returns that argument.
+
+  // ---------------------------------------------------
 
   int main()
   {
-    using namespace std;
-
-    {
-      auto up = pass_through(make_unique<string>("hello world"));
-    }
-    std::cout << "main continious\n";
-    // output ->
-    //	length: 11
-    //	string : hello world
-    //	main continious
+    auto up_str = pass_through(make_unique<string>("world"));
+    // output -> length = 5, string = world
   }
 */
 
 /*
-  #include <memory>
-  #include <exception>
+  #include <memory>     // std::make_unique
+  #include <exception>  // std::exception
+  #include <stdexcept>  // std::runtime_error
 
   struct Date {
-    Date(int d, int y, int m) : d(d), y(y), m(m){}
-    int d, y, m;
+    int m_d, m_m, m_y;
+
+    Date(int d, int m, int y) : m_d(d), m_m(m), m_y(y)
+    {
+      std::cout << "object in address = " << this 
+                << " has been created.\n";
+    }
+    ~Date()
+    {
+      std::cout << "object in address = " << this 
+                << " has been deleted.\n";
+    }
   };
 
   void bar()
   {
-    throw std::runtime_error{ "error error error!" };
+    throw std::runtime_error{ "exception thrown in bar" };
   }
 
-  void foo(int d, int m, int y)
+  void func_1(int d, int m, int y)
   {
-    Date* p = new Date(d, m, y);
+    Date* p_date = new Date(d, m, y);
 
     bar();
-    // if bar() throws an exception
-    // Date objects destructor can not be called.
+    // if any exception thrown in "bar" function,
+    // dynamically allocate Date object's destructor 
+    // can not be called, because of delete statement
+    // will not be executed.
 
-    delete p;
+    delete p_date;
+  }
 
-    auto up2 = std::make_unique<Date>(d, m, y);
-    // if some exception thrown, objects life will be end in stack unwinding phase.
-    // else at the end of the scope unique_ptr's life will end.
+  void func_2(int d, int m, int y)
+  {
+    auto up_date = std::make_unique<Date>(d, m, y);
+    // if an exception will be thrown, 
+    // unique_ptr's destructor will be called
+    // in stack unwinding phase.
+    // if no exception thrown, unique_ptr's destructor
+    // will be called at the end of the scope.
+
+    bar();
   }
 
   int main()
   {
-    try {
-      foo(1, 1, 1111);
+    // ------------------------------------------------
+
+    {
+      try {
+        func_1(1, 1, 2001);
+      }
+      catch (const std::exception& ex){
+        std::cout << "exception caught: " << ex.what() << '\n';
+      }
     }
-    catch (const std::exception& ex){
-      std::cout << "exception caught: " << ex.what() << '\n';
+    // output ->
+    //  object in address = 0x1668ab74840 has been created.
+    //  exception caught: exception thrown in bar
+
+    // ------------------------------------------------
+
+    {
+      try {
+        func_2(1, 1, 2001);
+      }
+      catch (const std::exception& ex){
+        std::cout << "exception caught: " << ex.what() << '\n';
+      }
     }
-    // output -> exception caught: error error error!
+    // output ->
+    //  object in address = 0x1668ab748a0 has been created.
+    //  object in address = 0x1668ab748a0 has been deleted.
+    //  exception caught: exception thrown in bar
+
+    // ------------------------------------------------
   }
 */
 
 /*
-  #include <memory>
+  #include <memory>   // std::unique_ptr
   #include <string>
-
-  // if we use classes data member as unique_ptr,
-  // compiler generated copy constructor and copy assignment
-  // will become implicitly deleted.
+  #include <utility>  // std::move
 
   class Person {
   public:
-    std::unique_ptr<std::string> mp_name{};
+    std::unique_ptr<std::string> mup_name{};
   };
-  // Person class become move only class.
+  // Person class becomes a move only class because 
+  // it has a std::unique_ptr data member.
+  // so compiler generated copy ctor and copy assignment
+  // will be implicitly deleted.
 
   int main()
   {
-    Person p1;
-    auto p2 = p1;		// syntax error, calling copy ctor
+    // ------------------------------------------------
 
-    Person p3;
-    p1 = p3;			// syntax error, calling copy assingment
+    Person per1;
+    auto per2 = per1;   // syntax error (copy constructor)
+    // error: use of deleted function 
+    // 'Person::Person(const Person&)'
 
-    p1 = std::move(p3);	// valid, calling move assignment.
+    // error: use of deleted function 
+    // 'std::unique_ptr(const std::unique_ptr&)
+
+    // ------------------------------------------------
+
+
+    Person per3;
+    per1 = per3;    // syntax error (copy assignment)
+
+    // error: use of deleted function 
+    // 'Person& Person::operator=(const Person&)'
+
+    //  error: use of deleted function 
+    // 'unique_ptr& unique_ptr::operator=(const std::unique_ptr&)
+
+    // ------------------------------------------------
+
+    per1 = std::move(per3);         // VALID (move assignment)
+    auto per4 = std::move(per1);    // VALID (move constructor)
+
+    // ------------------------------------------------
   }
 */
 
 /*
-  ------------------
-  | shared pointer |
-  ------------------
+                        -------------------
+                        | std::shared_ptr |
+                        -------------------
 */
 
 /*
-  reference counting technique has been used in shared_ptr class template.
+  ----------------------------------------------------
 
-  shared_ptr holds 2 pointers
-    1. Pointer to dynamic storage duration object
-    2. Pointer to control block
-      (Reference Count, Weak Count, Other Data.. e.g custom deleter, allocator)
+  - reference counting technique has been used in
+    std::shared_ptr class template
 
-  Control block created when we create a shared_ptr.
-  If we copy that shared_ptr to create a new shared_ptr,
-  control block will not be created again.
+  ----------------------------------------------------
 
-  shared_ptr have an overhead compared to the unique_ptr.
-  control block has cost (creating cost, memory cost)
+  - std::shared_ptr have 2 pointer data members,
+    -> a pointer to dynamic storage duration object
+    -> Pointer to control a block
+      - reference rount, 
+      - weak count, 
+      - custom deleter, allocator.. (other data)
 
-  if we did not call make_shared() factory function to create a shared_ptr
-  compiler can not allocate dynamic storage duration object and the control block
-  as one block of memory (contigious)
+  <---- check shared_ptr.png ---->  
 
-  deleter is a template parameter in unique_ptr but not in shared_ptr
-  constructor will get deleter as an argument in shared_ptr
+  ----------------------------------------------------
+
+  - control block is being created when a std::shared_ptr
+    object is created.
+  - if std::shared_ptr object is copied, control block
+    WILL NOT be created again.
+
+  - std::shared_ptr have an overhead compared to std::unique_ptr
+    because of the control block.
+    It is expensive to create the control block.
+
+  ----------------------------------------------------
+
+  - only when "std::make_shared" factory function is called 
+    to create a std::shared_ptr object, 
+    control block and dynamic storage duration object 
+    will be allocated contiguously(one block of memory).
+
+  ----------------------------------------------------
+
+  - deleter is a template parameter in std::unique_ptr 
+    but not in std::shared_ptr.
+  - std::shared_ptr's constructor will get deleter as an argument.
+
+  ----------------------------------------------------
 */
 
 /*
-  #include <memory>
+  #include <memory>   // std::unique_ptr, std::shared_ptr
   #include <string>
 
   int main()
   {
-    using uptr = std::unique_ptr<std::string>;
-    using sptr = std::shared_ptr<std::string>;
+    // ------------------------------------------------
 
-    std::cout << "sizeof(uptr) = " << sizeof(uptr) << '\n';
-    std::cout << "sizeof(sptr) = " << sizeof(sptr) << '\n';
-    // output ->
-    //	sizeof(uptr) = 8
-    //	sizeof(sptr) = 16
+    using up_str = std::unique_ptr<std::string>;
+
+    std::cout << "sizeof(up_str) = " 
+              << sizeof(up_str) << '\n';
+    // sizeof(up_str) = 8
+
+    // ------------------------------------------------
+
+    using sp_str = std::shared_ptr<std::string>;
+
+    std::cout << "sizeof(sp_str) = " 
+    << sizeof(sp_str) << '\n';
+    // sizeof(sp_str) = 16
+
+    // ------------------------------------------------
   }
 */
 
 /*
-  #include <memory>
+  #include <memory>   // std::shared_ptr
   #include <string>
 
   int main()
   {
-    using namespace std;
+    std::shared_ptr<std::string> sp1{ new std::string{ "world"} };
 
-    shared_ptr<string> sp1{ new string{"hello world"} };
+    auto sp2 = sp1;   // copy constructor
+    auto sp3 = sp1;   // copy constructor
+    auto sp4 = sp1;   // copy constructor
 
-    auto sp2 = sp1;	// copy constructor called.
-    auto sp3 = sp1;
-    auto sp4 = sp1;
+    *sp1 += " galaxy";
+    std::cout << *sp2 << '\n';    
+    // output -> world galaxy
 
-    *sp1 += " we are live";
-    cout << *sp2 << '\n';	// output -> hello world we are live
-    *sp3 += " from Izmir.";
-    cout << *sp4 << '\n';	// output -> hello world we are live from Izmir.
+    *sp3 += " universe";
+    std::cout << *sp4 << '\n';   
+    // output -> world galaxy universe
   }
 */
 
 /*
-  #include <memory>
+  #include <memory>   // std::shared_ptr
   #include <string>
 
   int main()
   {
-    using namespace std;
+    // ------------------------------------------------
 
-    shared_ptr<string> sp1{ new string{"hello world"} };
-    cout << "sp1.use_count() = " << sp1.use_count() << '\n';
+    std::shared_ptr<std::string> sp1{ new std::string{"world"} };
 
-    auto sp2 = sp1;
-    cout << "sp1.use_count() = " << sp1.use_count() << '\n';
-
-    {
-      auto sp3 = sp1;
-      cout << "sp1.use_count() = " << sp1.use_count() << '\n';
-    }
-
-    cout << "sp1.use_count() = " << sp1.use_count() << '\n';
-
-    auto sp4 = sp1;
-    cout << "sp1.use_count() = " << sp1.use_count() << '\n';
-
-    // output ->
-    //	sp1.use_count() = 1
-    //	sp1.use_count() = 2
-    //	sp1.use_count() = 3
-    //	sp1.use_count() = 2
-    //	sp1.use_count() = 3
-  }
-*/
-
-/*
-  #include <memory>
-  #include <string>
-
-  int main()
-  {
-    using namespace std;
-
-    shared_ptr<string> sp1{ new string{"hello world"} };
-
-    cout << "sp1.use_count() = " << sp1.use_count() << '\n';
+    std::cout << "sp1.use_count() = " << sp1.use_count() << '\n';
     // output -> sp1.use_count() = 1
 
-    auto sp2 = sp1;
-    cout << "sp1.use_count() = " << sp1.use_count() << '\n';
-    cout << "sp2.use_count() = " << sp2.use_count() << '\n';
-    // output ->
-    //	sp1.use_count() = 2
-    //	sp2.use_count() = 2
+    // ------------------------------------------------
 
-    sp1.reset();
-    cout << "sp1.use_count() = " << sp1.use_count() << '\n';
-    cout << "sp2.use_count() = " << sp2.use_count() << '\n';
-    // output ->
-    //	sp1.use_count() = 0
-    //	sp2.use_count() = 1
+    auto sp2 = sp1;   // copy constructor
 
-    cout << *sp2 << '\n';	// output -> hello world
-  }
-*/
+    std::cout << "sp1.use_count() = " << sp1.use_count() << '\n';
+    // output -> sp1.use_count() = 2
 
-/*
-  #include <memory>
-  #include <string>
-
-  int main()
-  {
-    using namespace std;
-
-    shared_ptr<string> sp1;
-    shared_ptr<string> sp2(new string{ "hello world" });
-
-    // operator bool() function
-    cout << "sp1 = " << (sp1 ? "full" : "empty") << '\n';	// output -> sp1 = empty
-    cout << "sp2 = " << (sp2 ? "full" : "empty") << '\n';	// output -> sp2 = full
-  }
-*/
-
-/*
-  unique() member function deleted in C++17, no longer exist after C++20.
-  use_count() returns 1 and unique() returns true are same behaviours
-*/
-
-/*
-  #include <memory>
-  #include <string>
-
-  int main()
-  {
-    using namespace std;
+    // ------------------------------------------------
 
     {
-      shared_ptr<string> sp1(new string{ "hello world" }, [](string* p) {
-        cout << "custom deleter\n"; delete p;
-        });
-    }
-    // sending lambda expression (custom deleter)(callable) to shared_ptr's constructor
+      auto sp3 = sp1;   // copy constructor
 
-    cout << "main continues\n";
-    // output ->
-    //	custom deleter
-    //	main continues
+      std::cout << "sp1.use_count() = " << sp1.use_count() << '\n';
+      // output -> sp1.use_count() = 3
+    }
+
+    std::cout << "sp1.use_count() = " << sp1.use_count() << '\n';
+    // output -> sp1.use_count() = 2    
+
+    // ------------------------------------------------
+
+    auto sp4 = sp1;
+    std::cout << "sp1.use_count() = " << sp1.use_count() << '\n';
+    // output -> sp1.use_count() = 3
+
+    // ------------------------------------------------
   }
 */
 
 /*
+  // "reset" member function of std::shared_ptr
+
+  #include <memory>   // std::shared_ptr
+  #include <string>
+
+  int main()
+  {
+    // -------------------------------------------------
+
+    std::shared_ptr<std::string> sp1{ new std::string{"world"} };
+
+    std::cout << "sp1.use_count() = " << sp1.use_count() << '\n';
+    //  output -> sp1.use_count() = 1
+
+    // -------------------------------------------------
+
+    auto sp2 = sp1;   // copy constructor
+
+    std::cout << "sp1.use_count() = " << sp1.use_count() << '\n';
+    std::cout << "sp2.use_count() = " << sp2.use_count() << '\n';
+    // output ->
+    //  sp1.use_count() = 2
+    //  sp2.use_count() = 2
+
+    // -------------------------------------------------
+
+    sp1.reset();
+
+    std::cout << "sp1.use_count() = " << sp1.use_count() << '\n';
+    std::cout << "sp2.use_count() = " << sp2.use_count() << '\n';
+    // output ->
+    //  sp1.use_count() = 0
+    //  sp2.use_count() = 1
+
+    // sp2 becomes the sole owner of the 
+    // dynamic storage duration object.
+
+    std::cout << *sp2 << '\n';  // output -> world
+
+    // -------------------------------------------------
+  }
+*/
+
+/*
+  // "operator bool" member function of std::shared_ptr
+
   #include <memory>
   #include <string>
 
+  int main()
+  {
+    // -------------------------------------------
+
+    std::shared_ptr<std::string> sp1;
+
+    std::cout << "sp1 = " 
+              << (sp1 ? "full" : "empty") << '\n';
+    // output -> sp1 = empty
+
+    // -------------------------------------------
+
+    std::shared_ptr<std::string> sp2(new std::string{ "world" });
+
+    std::cout << "sp2 = " 
+              << (sp2 ? "full" : "empty") << '\n';
+    // output -> sp2 = full
+
+    // -------------------------------------------
+  }
+*/
+
+/*
+  - "unique" member function of std::shared_ptr 
+    is no longer exists until C++20.
+
+  - "use_count" returns 1, 
+    "unique" returns true 
+  (same behaviour)
+*/
+
+/*
+  #include <memory>   // std::shared_ptr
+  #include <string>
+
+  int main()
+  {
+    std::cout << "[0] - main started\n";
+    {
+      std::shared_ptr<std::string> sp1( new std::string{ "world" }, 
+                                        [](std::string* p_str){
+                        std::cout << "custom deleter\n"; 
+                        delete p_str;
+                      });
+    }
+    std::cout << "[1] - main ended\n";
+
+    // passing lambda expression as a custom deleter
+    // to std::shared_ptr's constructor
+  }
+  // output ->
+  //  [0] - main started
+  //  custom deleter
+  //  [1] - main ended
+*/
+
+/*
+  #include <memory>   // std::make_shared
+  #include <string>
 
   struct Date {
     Date(int d, int m, int y) : m_day(d), m_mon(m), m_year(y) {}
@@ -2316,28 +2414,38 @@
 
   int main()
   {
-    using namespace std;
+    // ------------------------------------------------
 
-    auto sp = make_shared<string>(10, 'A');
-    cout << *sp << '\n';	// output -> AAAAAAAAAA
+    auto sp_str = std::make_shared<std::string>(10, 'A');
+    std::cout << *sp_str << '\n';
+    // output -> AAAAAAAAAA
 
-    auto sp2 = make_shared<Date>(1, 1, 1991);
+    // ------------------------------------------------
 
-    cout << "year = " << sp2->m_year << '\n';	// output -> 1991
-    cout << "month = " << sp2->m_mon << '\n';	// output -> 1
-    cout << "day = " << sp2->m_day << '\n';		// output -> 1
+    auto sp_date = std::make_shared<Date>(1, 1, 2001);
+
+    std::cout << "day = " << sp_date->m_day << '\n';
+    // output -> day = 1
+    std::cout << "month = " << sp_date->m_mon << '\n';
+    // output -> month = 1
+    std::cout << "year = " << sp_date->m_year << '\n';
+    // output -> year = 2001
+
+    // ------------------------------------------------
   }
 */
 
 /*
-  #include <memory>
-  #include <exception>
+  #include <cstddef>      // std::size_t
+  #include <cstdlib>      // std::malloc
+  #include <new>          // std::bad_alloc
+  #include <memory>       // std::shared_ptr, std::make_shared
 
-  void* operator new(std::size_t sz)
+  void* operator new(std::size_t size)
   {
-    std::cout << "operator new called. sz = " << sz << '\n';
+    std::cout << "operator new called, size = " << size << '\n';
 
-    void* vp = std::malloc(sz);
+    void* vp = std::malloc(size);
 
     if (!vp)
       throw std::bad_alloc{};
@@ -2346,793 +2454,789 @@
   }
 
   struct Date {
-    Date(int d, int m, int y) : m_day(d), m_mon(m), m_year(y) {}
     int m_day, m_mon, m_year;
+    Date(int d, int m, int y) : m_day(d), m_mon(m), m_year(y) 
+    {}
   };
 
   int main()
   {
-    using namespace std;
+    // ---------------------------------------------
 
     std::cout << "sizeof(Date) = " << sizeof(Date) << '\n';
-    // output -> //	sizeof(Date) = 12
+    // output -> sizeof(Date) = 12
 
-    shared_ptr<Date> sptr{ new Date{1, 1, 1991} };
+    // ---------------------------------------------
+
+    std::shared_ptr<Date> sp_date1{ new Date{ 1, 1, 2001 } };
     // output ->
-    //	operator new called.sz = 12		-> for Date object
-    //	operator new called.sz = 24		-> for Control block
-    // 2 allocation happened.
-
-    auto sptr2 = make_shared<Date>(1, 1, 1991);
-    // output -> operator new called.sz = 32
-    // only 1 allocation happened. (Date object + Control Block)
-  }
-*/
-
-/*
-  #include <memory>
-
-  struct Date {
-    Date() = default;
-    Date(int d, int m, int y) : m_day(d), m_mon(m), m_year(y) {}
-    int m_day, m_mon, m_year;
-  };
-
-  int main()
-  {
-    using namespace std;
-
-    shared_ptr<Date[]> sptr(new Date[10]);
-    auto sptr2 = make_shared<Date[]>(10);
-
-    sptr.operator[](2) = Date(1, 1, 1991);
-    // operator[]() function for array specialization
-
-    *sptr;	// syntax error for array specialization
-  }
-*/
-
-/*
-  #include <memory>
-  #include <string>
-
-  int main()
-  {
-    using namespace std;
-
-    shared_ptr<string> sp1(new string{ "hello world" }, [](string* p) {
-      cout << *p << " will be deleted\n"; delete p;
-      });
-    shared_ptr<string> sp2(new string{ "hello universe" });
-
-    cout << "sp1.use_count() = " << sp1.use_count() << '\n';
-    cout << "sp2.use_count() = " << sp2.use_count() << '\n';
-
-    sp1 = sp2;
-    cout << "after assingment\n";
-    cout << "sp1.use_count() = " << sp1.use_count() << '\n';
-    cout << "sp2.use_count() = " << sp2.use_count() << '\n';
-
-    // output ->
-    //	sp1.use_count() = 1
-    //	sp2.use_count() = 1
-    //	hello world will be deleted
-    //		-> because of sp1 is now owns the same pointer that sp2 owns before.
-    //	after assingment
-    //	sp1.use_count() = 2
-    //	sp2.use_count() = 2
-    //		-> sp1 and sp2 use_count = 2, they both point
-    //       the same pointer that points to "hello universe" string
-  }
-*/
-
-/*
-  #include <memory>
-  #include <string>
-
-  int main()
-  {
-    using namespace std;
-
-    shared_ptr<string> sp1(new string{ "hello world" }, [](string* p) {
-      cout << *p << " will be deleted\n"; delete p;
-      });
-    shared_ptr<string> sp2(new string{ "hello universe" });
-
-    cout << "sp1.use_count() = " << sp1.use_count() << '\n';
-    cout << "sp2.use_count() = " << sp2.use_count() << '\n';
-
-    sp1 = move(sp2);
-    cout << "after assingment\n";
-    cout << "sp1.use_count() = " << sp1.use_count() << '\n';
-    cout << "sp2.use_count() = " << sp2.use_count() << '\n';
-
-    // output ->
-    //	sp1.use_count() = 1
-    //	sp2.use_count() = 1
-    //	hello world will be deleted -> sp1 is become pointing to the string that
-    //                                 sp2 is pointing before.
-    //	after assingment
-    //	sp1.use_count() = 1	-> sp1(the pointer that sp1 wraps, owns) is now
-    //                         pointing to "hello universe"
-    //	sp2.use_count() = 0 -> pointer that sp2 owns has stolen by sp1,
-    //                         sp2 do not own any pointer now.
-  }
-*/
-
-/*
-  #include <memory>
-  #include <vector>
-  #include <list>
-  #include "nutility.h"
-
-  int main()
-  {
-    using namespace std;
-
-    vector<shared_ptr<string>> svec;
-
-    for (int i = 0; i < 5; ++i) {
-      svec.emplace_back(new string(rtown()));
-    }
-
-    cout << "svec.size() = " << svec.size() << '\n';	// output -> svec.size() = 10
-
-    for (const auto& sp : svec) {
-      cout << *sp << '\n';
-    }
-    // output ->
-    //	rize
-    //	canakkale
-    //	balikesir
-    //	bolu
-    //	igdir
-
-    list<shared_ptr<string>> slist(svec.begin(), svec.end());
-    for (auto& sp : slist) {
-      *sp += "111";
-    }
-
-    for (const auto& sp : svec) {
-      cout << *sp << '\n';
-    }
-    // output ->
-    //	rize111
-    //	canakkale111
-    //	balikesir111
-    //	bolu111
-    //	igdir111
-
-    // both shared_ptr's in vector and list are pointing to the same objects.
-  }
-*/
-
-/*
-  #include <memory>
-
-  int main()
-  {
-    using namespace std;
-
-    auto sp = make_shared<string>("hello world");
-
-    cout << "string is @" << sp << '\n';
-    cout << "string is @" << sp.get() << '\n';
-    // Those 2 lines are same
-    cout << "*sp = " << *sp << '\n';
-
-    // output ->
-    //	string is @000001E0BE686EF0
-    //	string is @000001E0BE686EF0
-    //	* sp = hello world
-  }
-*/
-
-/*
-  #include <memory>
-
-  int main()
-  {
-    using namespace std;
-
-    auto sp = make_shared<string>("hello world");
-
-    sp = nullptr;
-    sp = {};
-    sp.reset();
-    // Those 3 lines are same and they all will make sp empty.
-  }
-*/
-
-/*
-  #include <memory>
-  #include <list>
-  #include <string>
-  #include <vector>
-  #include <algorithm>
-
-  class City {
-  public:
-    City(std::string str) : mcity_name(str) {}
-    friend std::ostream& operator<<(std::ostream& os, const City& c)
-    {
-      return os << c.mcity_name << ' ';
-    }
-    auto operator<=>(const City& c)const = default;
-  private:
-    std::string mcity_name;
-  };
-
-  int main()
-  {
-
-    using CityPtr = std::shared_ptr<City>;
-
-    std::list<CityPtr> mylist;
-
-    mylist.emplace_back(new City{ "istanbul" });
-    mylist.emplace_back(new City{ "ankara" });
-    mylist.emplace_back(new City{ "izmir" });
-    mylist.emplace_back(new City{ "rize" });
-    mylist.emplace_back(new City{ "sanliurfa" });
-
-    {
-      std::vector<CityPtr> myvec(mylist.begin(), mylist.end());
-
-      std::sort(myvec.begin(), myvec.end(), [](const auto& p1, const auto& p2) {
-        return *p1 < *p2;
-        });
-
-      for (auto& s : myvec)
-        std::cout << *s;
-      // output -> ankara istanbul izmir rize sanliurfa
-      std::cout << '\n';
-    }
-
-
-    for (auto& s : mylist)
-      std::cout << *s;
-    // output -> istanbul ankara izmir rize sanliurfa
+    //  operator new called, size = 12
+    //  - allocation for Date object
+    //  operator new called, size = 24
+    //  - allocation for control block
 
     std::cout << '\n';
-    std::cout << "main continues\n";
+
+    // ---------------------------------------------
+
+    auto sp_date2 = std::make_shared<Date>(1, 1, 1991);
+    // output -> operator new called, size = 32
+    //  - allocation for Date object + control block
+
+    // ---------------------------------------------
   }
 */
 
 /*
-  --------------------------------
-  | week pointer - std::weak_ptr |
-  --------------------------------
-*/
-
-/*
-  #include <memory>
+  #include <memory>   // std::shared_ptr, std::make_shared
 
   struct Date {
-    Date() = default;
-    Date(int d, int m, int y) : m_day(d), m_mon(m), m_year(y) {}
     int m_day, m_mon, m_year;
+    Date() = default;
+    Date(int d, int m, int y) : m_day(d), m_mon(m), m_year(y) 
+    {}
   };
 
   int main()
   {
-    using namespace std;
+    std::shared_ptr<Date[]> sp_date_arr1(new Date[10]);
+    auto sp_date_arr2 = std::make_shared<Date[]>(10);
 
-    auto sp = make_shared<Date>(1, 2, 1993);
-    cout << "sp.use_count() = " << sp.use_count() << '\n';		// output -> sp.use_count() = 1
+    // ---------------------------------------------
 
-    weak_ptr<Date> wp1(sp);
-    weak_ptr<Date> wp2(sp);
-    weak_ptr<Date> wp3(sp);
-    cout << "sp.use_count() = " << sp.use_count() << '\n';		// output -> sp.use_count() = 1
-    cout << "wp1.use_count() = " << wp1.use_count() << '\n';	// output -> wp1.use_count() = 1
+    sp_date_arr1.operator[](1) = Date(1, 1, 2001);
+    // "operator[]" member function for 
+    // C-style array specialization of std::shared_ptr
 
-    *sp;	// valid
-    // we can reach the object that shared pointer points to with dereferencing operator.
-    *wp1;	// syntax error.
-    // we can not reach the object that weak pointer points to with dereferencing operator.
+    sp_date_arr2.operator[](2) = Date(2, 2, 2002);
+
+    // ---------------------------------------------
+
+    *sp_date_arr1;    // syntax error
+    // error: no match for 'operator*' 
+    // (operand type is 'std::shared_ptr<Date []>')
+
+    // ---------------------------------------------
   }
 */
 
 /*
-  #include <memory>
-
-  struct Date {
-    Date() = default;
-    Date(int d, int m, int y) : m_day(d), m_mon(m), m_year(y) {}
-    int m_day, m_mon, m_year;
-  };
-
-  int main()
-  {
-    using namespace std;
-
-    auto sp = make_shared<Date>(1, 2, 1993);
-    weak_ptr<Date> wp(sp);
-
-    if (wp.expired())
-      cout << "object not exists\n";
-    else
-      cout << "object exists\n";
-    // output -> object exists
-    // because of shared_ptr is still alive. wp is not expired. object exists.
-
-    wp.reset();
-
-    if (wp.expired())
-      cout << "object not exists\n";
-    else
-      cout << "object exists\n";
-    // output -> object not exists
-  }
-*/
-
-/*
-  #include <memory>
-
-  struct Date {
-    Date() = default;
-    Date(int d, int m, int y) : m_day(d), m_mon(m), m_year(y) {}
-
-    friend std::ostream& operator<<(std::ostream& os, const Date& d)
-    {
-      return os << '(' << d.m_day << ", " << d.m_mon << ", " << d.m_year << ")\n";
-    }
-
-    int m_day, m_mon, m_year;
-  };
-
-  int main()
-  {
-    using namespace std;
-
-    auto sp = make_shared<Date>(1, 2, 1993);
-    weak_ptr<Date> wp(sp);
-
-    cout << "sp.use_count() = " << sp.use_count() << '\n';
-
-    // weak_ptr.lock() member function returns shared_ptr
-    // if the object that shared_ptr pointing is still alive,
-    // will return a new shared_ptr pointing the same object
-    // else return nullptr
-
-    if (auto spx = wp.lock())
-    {
-      cout << "object still exists\n";
-      cout << "sp.use_count() = " << sp.use_count() << '\n';
-      cout << *spx;
-      cout << *sp;
-    }
-    else
-      cout << "object is not exists\n";
-
-    // output ->
-    //	sp.use_count() = 1
-    //	object still exists
-    //	sp.use_count() = 2
-    //	(1, 2, 1993)
-    //	(1, 2, 1993)
-
-    wp.reset();
-    if (auto spx = wp.lock())
-      cout << "object still exists\n";
-    else
-      cout << "object is not exists\n";
-    // output -> cout << "object is not exists\n";
-  }
-*/
-
-/*
-  #include <memory>
-  #include <exception>
+  #include <memory>   // std::shared_ptr
   #include <string>
 
   int main()
   {
     using namespace std;
 
-    auto sp = make_shared<string>("hello world");
-    weak_ptr<string> wp(sp);
+    shared_ptr<string> sp_str1( new string{ "world" }, 
+                                [](string* p_str){
+            cout << *p_str << " will be deleted\n"; 
+            delete p_str;
+          });
 
-    sp.reset();	// reset the shared_ptr resource that used to create weak_ptr
+    shared_ptr<string> sp_str2(new string{ "galaxy" });
 
-    try
-    {
-      shared_ptr<string> spx(wp);	// output -> exception caught: bad_weak_ptr
-    }
-    catch (const std::exception& ex)
-    {
-      cout << "exception caught: " << ex.what() << '\n';
-    }
+    // --------------------------------------------------
 
-    if (!wp.expired()) {
-      shared_ptr<string> spx(wp);
-    }
-    // not possible to throw exception in this scenerio.
-    // we are controlling that if the shared_ptr(that weak_ptr is created from) still have the resources.
-    // with weak_ptr's expired() member function
-  }
-*/
+    cout  << "sp_str1.use_count() = " 
+          << sp_str1.use_count() << '\n';
+    cout  << "sp_str2.use_count() = " 
+          << sp_str2.use_count() << '\n';
+    // output -> 
+    //  sp_str1.use_count() = 1
+    //  sp_str2.use_count() = 1
 
-/*
-  #include <memory>
+    cout << *sp_str1 << '\n';
+    // output -> world
+    cout << *sp_str2 << '\n';
+    // output -> galaxy
 
-  struct B;
+    // --------------------------------------------------
 
-  struct A {
-    std::shared_ptr<B> bptr;
-    ~A() {
-      std::cout << "A destructor\n";
-    }
-  };
+    sp_str1 = sp_str2;  
+    // output -> world will be deleted
 
-  struct B {
-    std::shared_ptr<A> aptr;
-    ~B() {
-      std::cout << "B destructor\n";
-    }
-  };
-
-  int main()
-  {
-    std::shared_ptr<A> spa{ new A };
-    std::shared_ptr<B> spb{ new B };
-
-    std::cout << "spb.use_count() = " << spb.use_count() << '\n';
-    spa->bptr = spb;
-    std::cout << "spb.use_count() = " << spb.use_count() << '\n';
-
+    cout  << "sp_str1.use_count() = " 
+          << sp_str1.use_count() << '\n';
+    cout  << "sp_str2.use_count() = " 
+          << sp_str2.use_count() << '\n';
     // output ->
-    //	spb.use_count() = 1
-    //  spb.use_count() = 2
-    //	A destructor
-    //	B destructor
+    //  sp_str1.use_count() = 2
+    //  sp_str2.use_count() = 2
+
+    cout << *sp_str1 << '\n';
+    // output -> galaxy
+    cout << *sp_str2 << '\n';
+    // output -> galaxy
+
+    // --------------------------------------------------
   }
 */
 
 /*
-  #include <memory>
-
-  struct B;
-
-  struct A {
-    std::shared_ptr<B> bptr;
-    ~A() {
-      std::cout << "A destructor\n";
-    }
-  };
-
-  struct B {
-    std::shared_ptr<A> aptr;
-    ~B() {
-      std::cout << "B destructor\n";
-    }
-  };
-
-  int main()
-  {
-    std::shared_ptr<A> spa{ new A };
-    std::shared_ptr<B> spb{ new B };
-
-    spa->bptr = spb;
-    std::cout << "spb.use_count() = " << spb.use_count() << '\n';
-    spb->aptr = spa;
-    std::cout << "spa.use_count() = " << spa.use_count() << '\n';
-
-    // output ->
-    //	spb.use_count() = 2
-    //  spa.use_count() = 2
-  }
-*/
-
-/*
-  #include <memory>
-
-  struct B;
-
-  struct A {
-    std::weak_ptr<B> bptr;
-    ~A() {
-      std::cout << "A destructor\n";
-    }
-  };
-
-  struct B {
-    std::shared_ptr<A> aptr;
-    ~B() {
-      std::cout << "B destructor\n";
-    }
-  };
-
-  int main()
-  {
-    std::shared_ptr<A> spa{ new A };
-    std::shared_ptr<B> spb{ new B };
-
-    spa->bptr = spb;
-    std::cout << "spb.use_count() = " << spb.use_count() << '\n';
-    spb->aptr = spa;
-    std::cout << "spa.use_count() = " << spa.use_count() << '\n';
-
-    // output ->
-    //	spb.use_count() = 1
-    //	spa.use_count() = 2
-    //	B destructor
-    //	A destructor
-  }
-*/
-
-/*
-  #include <memory>
+  #include <memory>   // std::shared_ptr
   #include <string>
-
-  class Dog {
-  public:
-    Dog(std::string name) : m_name(std::move(name))
-    {
-      std::cout << m_name << " born\n";
-    }
-    ~Dog()
-    {
-      std::cout << m_name << " dead\n";
-    }
-
-    void bark()
-    {
-      std::cout << m_name << " is barking\n";
-    }
-
-    void make_friend(std::shared_ptr<Dog> friend_dog)
-    {
-      mp_friend = friend_dog;
-      std::cout << m_name << " and " << friend_dog->m_name << " become friends\n";
-    }
-
-    bool has_friend() const
-    {
-      return !mp_friend.expired();
-    }
-
-    void print() const
-    {
-      std::cout << "dog name: " << m_name;
-
-      if (!mp_friend.expired())
-        std::cout << ", has a friend called " << mp_friend.lock()->m_name << '\n';
-      else
-        std::cout << ", doesn't have friend\n";
-    }
-  private:
-    std::weak_ptr<Dog> mp_friend;
-    std::string m_name;
-  };
-
-  int main()
-  {
-    using namespace std;
-    shared_ptr<Dog> sp1(make_shared<Dog>("dog1"));
-    shared_ptr<Dog> sp2(make_shared<Dog>("dog2"));
-
-    sp1->make_friend(sp2);
-    sp2->make_friend(sp1);
-
-    std::cout << sp1.use_count() << '\n';
-    std::cout << sp2.use_count() << '\n';
-
-    sp1->print();
-    sp2->print();
-  }
-*/
-
-/*
-  ----------------------------------------------------
-  | CRTP(Curiously Recurring Template Pattern) idiom |
-  ----------------------------------------------------
-*/
-
-/*
-  // CRTP(Curiously Recurring Template Pattern) idiom
-  // 1. compile-time polymorphism
-  // 2. calling derived class member functions from base classes member function.
-
-  #include <memory>
-
-  template <typename T>
-  class Animal {
-  public:
-    void cry()
-    {
-      static_cast<T*>(this)->make_sound();
-    }
-  };
-
-  class Dog : public Animal<Dog> {
-  public:
-    void make_sound()
-    {
-      std::cout << "hav hav hav\n";
-    }
-  };
-
-  class Cat : public Animal<Cat> {
-  public:
-    void make_sound() {
-      std::cout << "miyav miyav\n";
-    }
-  };
-
-  class Lamb : public Animal<Lamb> {
-  public:
-    void make_sound() {
-      std::cout << "meee\n";
-    }
-  };
-
-  template <typename T>
-  void talk_pet(Animal<T>& x)
-  {
-    x.cry();
-  }
-
-  int main()
-  {
-    Dog mydog;
-    Cat mycat;
-    Lamb mylamb;
-
-    talk_pet(mylamb);
-    talk_pet(mycat);
-    talk_pet(mydog);
-    // output ->
-    //	meee
-    //	miyav miyav
-    //	hav hav hav
-  }
-*/
-
-/*
-  template <typename D>
-  class Base {
-  public:
-    bool is_greater(const Base& other)const
-    {
-      return !static_cast<const D&>(*this).operator<(other);
-    }
-  };
-
-  class Der : public Base<Der> {
-  public:
-    bool operator<(const Der&);
-  };
-
-  class Mer : public Base<Mer> {
-  public:
-    bool operator<(const Mer&);
-  };
-*/
-
-/*
-  #include <string>
-
-  template <typename Der>
-  struct comparison {
-    const Der& derived() const
-    {
-      return static_cast<const Der&>(*this);
-    }
-
-    friend bool operator>(const comparison<Der>& left, const comparison<Der>& right)
-    {
-      return right.derived() < left.derived();
-    }
-
-    friend bool operator>=(const comparison<Der>& left, const comparison<Der>& right)
-    {
-      return !(left.derived() < right.derived());
-    }
-
-    friend bool operator<=(const comparison<Der>& left, const comparison<Der>& right)
-    {
-      return !(right.derived() < left.derived());
-    }
-
-    friend bool operator==(const comparison<Der>& left, const comparison<Der>& right)
-    {
-      return !(left.derived() < right.derived()) && !(right.derived() < left.derived());
-    }
-
-    friend bool operator!=(const comparison<Der>& left, const comparison<Der>& right)
-    {
-      return !(left == right);
-    }
-  };
-
-  class Myclass : public comparison<Myclass>
-  {
-  public:
-    Myclass(int x) : x_{ x } {}
-    bool operator<(const Myclass& other)const
-    {
-      return x_ < other.x_;
-    }
-  private:
-    int x_;
-  };
-
-  class Person : public comparison<Person> {
-  public:
-    Person(std::string name) : name_(std::move(name)) {}
-    bool operator<(const Person& other) const
-    {
-      return name_ < other.name_;
-    }
-  private:
-    std::string name_;
-  };
-
-  // Think about you have different wrapper classes and all of its members are sorted
-  // with different comparison styles Every classes operator<() function behaves different.
-  // Normally you have to write all of the functions in Comparison class to all of your classes.
-  // But when using CRTP if we define only operator<() function inside our Der class
-  // we can also use operator>=(), operator<=() operator==(),operator!=() functions
-  // which are defined inside its Base class.
-
-  // e.g think about der_1.operator>(der_2) function needs to be executed.
-  // because of base class does have operator>() overload, inside of this function
-  // Base classes derived() member function will be called for both of the objects (right and left) ,
-  // that are actually has been used as a Base object (Base class inside of the Derived class object).
-  // Applying static_cast to "Base objects" them to become "Derived objects" again,
-  // and using Derived classes member operator<() function to inside Base classes operator>() function.
+  #include <utility>  // std::move
 
   int main()
   {
     using namespace std;
 
-    Myclass x{ 123 }, y{ 111 };
-    cout << boolalpha;
+    shared_ptr<string> sp_str1( new string{ "world" }, 
+                                [](string* p_str){
+            cout << *p_str << " will be deleted\n"; 
+            delete p_str;
+          });
 
-    cout << "x < y	:	"	<< (x < y) << '\n';
-    cout << "x <= y	:	"	<< (x <= y) << '\n';
-    cout << "x > y	:	"	<< (x > y) << '\n';
-    cout << "x > y	:	"	<< (x >= y) << '\n';
-    cout << "x > y	:	"	<< (x == y) << '\n';
-    cout << "x > y	:	"	<< (x != y) << '\n';
+    shared_ptr<string> sp_str2(new string{ "galaxy" });
 
+    // --------------------------------------------------
 
-    Person str_x{ "hello" };
-    Person str_y{ "world" };
+    cout  << "sp_str1.use_count() = " 
+          << sp_str1.use_count() << '\n';
+    cout  << "sp_str2.use_count() = " 
+          << sp_str2.use_count() << '\n';
+    // output -> 
+    //  sp_str1.use_count() = 1
+    //  sp_str2.use_count() = 1
 
-    cout << "str_x < str_y	:	" << (str_x < str_y) << '\n';
-    cout << "str_x <= str_y	:	" << (str_x <= str_y) << '\n';
-    cout << "str_x > str_y	:	" << (str_x > str_y) << '\n';
-    cout << "str_x > str_y	:	" << (str_x >= str_y) << '\n';
-    cout << "str_x > str_y	:	" << (str_x == str_y) << '\n';
-    cout << "str_x > str_y	:	" << (str_x != str_y) << '\n';
+    cout << *sp_str1 << '\n';
+    // output -> world
+    cout << *sp_str2 << '\n';
+    // output -> galaxy
+
+    // --------------------------------------------------
+
+    sp_str1 = std::move(sp_str2);  
+    // output -> world will be deleted
+
+    cout  << "sp_str1.use_count() = " 
+          << sp_str1.use_count() << '\n';
+    cout  << "sp_str2.use_count() = " 
+          << sp_str2.use_count() << '\n';
+    // output ->
+    //  sp_str1.use_count() = 1
+    //  sp_str2.use_count() = 0
+
+    cout << *sp_str1 << '\n';
+    // output -> galaxy
+
+    // --------------------------------------------------
+  }
+*/
+
+/*
+  #include <vector>
+  #include <memory>   // std::shared_ptr
+  #include <list>
+  #include "../headers/nutility.h"
+
+  int main()
+  {
+    // ---------------------------------------------
+
+    std::vector<std::shared_ptr<std::string>> sp_str_vec;
+
+    for (int i = 0; i < 5; ++i)
+      sp_str_vec.emplace_back(new std::string(rtown()));
+
+    std::cout << "sp_str_vec.size() = " 
+              << sp_str_vec.size() << '\n';
+
+    // ---------------------------------------------
+
+    for (const auto& sp_str : sp_str_vec)
+      std::cout << *sp_str << '\n';
+    // output ->
+    //  bilecik
+    //  usak
+    //  ordu
+    //  trabzon
+    //  artvin
+
+    // ---------------------------------------------
+
+    std::list<std::shared_ptr<std::string>> sp_str_list(
+      sp_str_vec.begin(), sp_str_vec.end());
+      
+    for (auto& sp_str : sp_str_list)
+      *sp_str += " - world";
+
+    for (const auto& sp_str : sp_str_vec)
+      std::cout << *sp_str << '\n';
+    
+    // output ->
+    //  bilecik - world
+    //  usak - world
+    //  ordu - world
+    //  trabzon - world
+    //  artvin - world
+
+    // ---------------------------------------------
+
+    // both std::shared_ptr objects in std::vector and std::list 
+    // containers are pointing to the same std::string objects.
+
+    // ---------------------------------------------
+  }
+*/
+
+/*
+  #include <memory>   // std::make_shared
+  #include <string>
+
+  int main()
+  {
+    auto sp_str = std::make_shared<std::string>("world");
+
+    std::cout << "address of string = " << sp_str << '\n';
+    // output -> address of string = 0x1b99d4b7840
+    std::cout << "address of string = " << sp_str.get() << '\n';
+    // output -> address of string = 0x1b99d4b7840
+
+    // Those 2 lines are equivalent.
+  }
+*/
+
+/*
+  #include <memory>   // std::make_shared
+  #include <string>
+
+  int main()
+  {
+    auto sp_str = std::make_shared<std::string>("world");
+
+    sp_str = nullptr;
+    sp_str = {};
+    sp_str.reset();
+    // Those 3 lines are equivalent.
+
+    // They both are making the std::shared_ptr object empty.
+  }
+*/
+
+/*
+  #include <memory>       // std::shared_ptr
+  #include <list>
+  #include <string>
+  #include <vector>
+  #include <algorithm>    // std::sort
+
+  class City {
+  private:
+    std::string m_city_name;
+
+  public:
+    City(std::string str) : m_city_name(str) 
+    {}
+
+    friend std::ostream& operator<<(std::ostream& os, 
+                                    const City& city)
+    {
+      return os << city.m_city_name << ' ';
+    }
+    auto operator<=>(const City& city)const = default;
+  };
+
+  int main()
+  {
+
+    using sp_city = std::shared_ptr<City>;
+
+    std::list<sp_city> sp_city_list;
+
+    sp_city_list.emplace_back(new City{ "istanbul" });
+    sp_city_list.emplace_back(new City{ "ankara" });
+    sp_city_list.emplace_back(new City{ "izmir" });
+    sp_city_list.emplace_back(new City{ "eskisehir" });
+    sp_city_list.emplace_back(new City{ "rize" });
+
+    for (auto& sp_city : sp_city_list)
+      std::cout << *sp_city;
+    // output -> istanbul ankara izmir eskisehir rize
+
+    std::cout << '\n';
+
+    // ------------------------------------------------
+
+    std::vector<sp_city> sp_city_vec( sp_city_list.begin(), 
+                                      sp_city_list.end());
+
+    std::sort(sp_city_vec.begin(), sp_city_vec.end(), 
+              [](const auto& sp_city1, const auto& sp_city2){
+                  return *sp_city1 < *sp_city2;
+            });
+
+    for (auto& sp_city : sp_city_vec)
+      std::cout << *sp_city;
+    // output -> ankara eskisehir istanbul izmir rize
+
+    // ------------------------------------------------
   }
 */
 
 /*
   #include <memory>
+  // std::enable_shared_from_this, std:make_shared
 
-  class Myclass : public std::enable_shared_from_this<Myclass> {	// CRTP
+  class Myclass : public std::enable_shared_from_this<Myclass> {	
   public:
     Myclass()
     {
-      std::cout << "Myclass ctor this: " << this << '\n';
+      std::cout << "Myclass(), this = " << this << '\n';
     }
 
     void func()
     {
-      std::cout << "Myclass::func() function : " << this << '\n';
-      // i am sure that func() function is called for a dynamic Myclass object,
-      // controlled by a shared_ptr
-      auto sptr = shared_from_this();
-      std::cout << "sptr.use_count() = " << sptr.use_count() << '\n';
+      std::cout << "Myclass::func(), this =  " << this << '\n';
+      auto sp = shared_from_this();
+      std::cout << "sp.use_count() = " << sp.use_count() << '\n';
     }
+
+    // being sure that "func" member function is called 
+    // with std::shared_ptr object.
 
     ~Myclass()
     {
-      std::cout << "Myclass desturctor : " << this << '\n';
+      std::cout << "~Myclass(), this = " << this << '\n';
+    }
+  };
+
+  int main()
+  {
+    // -------------------------------------------------
+
+    auto sp_mx = std::make_shared<Myclass>();
+    // output -> Myclass(), this = 0x19f0e325780
+
+    sp_mx->func();
+    // output -> 
+    //  Myclass::func(), this =  0x19f0e325780
+    //  sp.use_count() = 2
+
+    // -------------------------------------------------
+
+    Myclass* p_mx = new Myclass;
+    // output -> Myclass(), this = 0x19f0e322e70
+
+    try
+    {
+      p_mx->func();
+    }
+    catch (const std::exception& ex)
+    {
+      std::cout << "exception caught: " << ex.what() << '\n';
+    }
+    // output ->
+    //  Myclass::func(), this =  0x19f0e322e70
+    //  exception caught: bad_weak_ptr
+
+    // when "func" member function is called with raw pointer,
+    // std::bad_weak_ptr exception will be thrown.
+    // destructor of the Myclass object that "p_mx" points to
+    // will not be called.
+
+    // -------------------------------------------------
+  }
+*/
+
+/*
+                          -----------------
+                          | std::weak_ptr |
+                          -----------------
+*/
+
+/*
+  #include <memory>   // std::make_shared, std::weak_ptr
+
+  struct Date {
+    int m_day, m_mon, m_year;
+    Date() = default;
+    Date(int d, int m, int y) : m_day(d), m_mon(m), m_year(y) 
+    {}
+  };
+
+  int main()
+  {
+    // -------------------------------------------------
+
+    auto sp = std::make_shared<Date>(1, 1, 2001);
+
+    std::cout << "sp.use_count() = " << sp.use_count() << '\n';
+    // output -> sp.use_count() = 1
+
+    // -------------------------------------------------
+
+    std::weak_ptr<Date> wp1(sp);
+    std::weak_ptr<Date> wp2(sp);
+
+    std::cout << "sp.use_count() = " << sp.use_count() << '\n';
+    // output -> sp.use_count() = 1
+    std::cout << "wp1.use_count() = " << wp1.use_count() << '\n';
+    // output -> wp1.use_count() = 1
+    std::cout << "wp2.use_count() = " << wp2.use_count() << '\n';
+    // output -> wp2.use_count() = 1
+
+    // -------------------------------------------------
+
+    *sp;    // VALID
+
+    // reaching the object that std::shared_ptr points to
+    // with dereferencing operator is valid.
+
+    *wp1;   // syntax error
+    // error: no match for 'operator*' 
+    // (operand type is 'std::weak_ptr<Date>')
+
+    // reaching the object that std::weak_ptr points to
+    // with dereferencing operator is syntax error.
+
+    // -------------------------------------------------
+  }
+*/
+
+/*
+  // "reset" member function of std::weak_ptr
+
+  #include <memory>   // std::make_shared, std::weak_ptr
+
+  struct Date {
+    int m_day, m_mon, m_year;
+    Date() = default;
+    Date(int d, int m, int y) : m_day(d), m_mon(m), m_year(y) 
+    {}
+  };
+
+  int main()
+  {
+    // -------------------------------------------------
+
+    auto sp = std::make_shared<Date>(1, 1, 2001);
+    std::weak_ptr<Date> wp(sp);
+
+    if (wp.expired())
+      std::cout << "object does not exist\n";
+    else
+      std::cout << "object exists\n";
+    // output -> object exists
+
+    // -------------------------------------------------
+
+    wp.reset();
+
+    if (wp.expired())
+      std::cout << "object does not exist\n";
+    else
+      std::cout << "object exists\n";
+    // output -> object does not exist
+
+    // -------------------------------------------------
+  }
+*/
+
+/*
+  #include <memory>   // std::make_shared, std::weak_ptr
+  #include "../headers/date.h"
+
+  int main()
+  {
+    auto sp = std::make_shared<Date>(1, 1, 2001);
+    std::weak_ptr<Date> wp(sp);
+
+    std::cout << "sp.use_count() = " << sp.use_count() << '\n';
+    // sp.use_count() = 1
+
+    // ------------------------------------------------
+
+    // "lock" member function of std::weak_ptr checks 
+    // checks if there is an object managed by std::weak_ptr
+    //  - if yes, returns a new std::shared_ptr to the same object.
+    //  - else, returns nullptr.
+
+    if (auto sp_x = wp.lock()) 
+    {
+      std::cout << "an object is managed by 'wp'\n";
+      std::cout << "sp.use_count() = " << sp.use_count() << '\n';
+      std::cout << "sp_x = " << *sp_x << "\n";
+      std::cout << "sp   = " << *sp << "\n";
+    }
+    else
+      std::cout << "'wp' does not manage an object\n";
+
+    // output ->
+    //  an object is managed by 'wp'
+    //  sp.use_count() = 2
+    //  sp_x = 01 Ocak 2001 Pazartesi
+    //  sp   = 01 Ocak 2001 Pazartesi
+
+    std::cout << "sp.use_count() = " << sp.use_count() << '\n';
+    // output -> sp.use_count() = 1
+
+    // ------------------------------------------------
+
+    wp.reset();
+    // https://en.cppreference.com/w/cpp/memory/weak_ptr/reset
+
+    if (auto sp_x = wp.lock())
+      std::cout << "an object is managed by 'wp'\n";
+    else
+      std::cout << "'wp' does not manage an object\n";
+    // output -> 'wp' does not manage an object
+
+    std::cout << "sp.use_count() = " << sp.use_count() << '\n';
+    // output -> sp.use_count() = 1
+
+    // ------------------------------------------------
+  }
+*/
+
+/*
+  #include <memory>       
+  // std::make_shared, std::shared_ptr, std::weak_ptr
+  #include <exception>    // std::exception
+  #include <string>
+
+  int main()
+  {
+    auto sp = std::make_shared<std::string>("world");
+    std::weak_ptr<std::string> wp(sp);
+
+    // -------------------------------------------------
+
+    sp.reset();
+    // reseting the std::shared_ptr resource 
+    // that used for constructing std::weak_ptr object with
+
+    try {
+      std::shared_ptr<std::string> sp2(wp);
+    }
+    catch (const std::exception& ex) 
+    {
+      std::cout << "exception caught: " << ex.what() << '\n';
+    }
+    // output -> exception caught: bad_weak_ptr
+
+    // -------------------------------------------------
+
+    if (!wp.expired())
+      std::shared_ptr<std::string> sp2(wp);
+    
+    // it is not possible to throw exception in this scenario.
+    // checking if the std::weak_ptr object is "expired" or not.
+
+    // -------------------------------------------------
+  }
+*/
+
+/*
+  #include <memory>   // std::shared_ptr, std::weak_ptr
+
+  struct BStruct;   // forward declaration
+
+  struct AStruct {
+    std::shared_ptr<BStruct> msp_BStruct;
+    ~AStruct() 
+    {
+      std::cout << "~AStruct()\n";
+    }
+  };
+
+  struct BStruct {
+    std::shared_ptr<AStruct> msp_AStruct;
+    ~BStruct() 
+    {
+      std::cout << "~BStruct()\n";
+    }
+  };
+
+  int main()
+  {
+    std::cout << "[0] - main started\n";
+    {
+      std::shared_ptr<AStruct> sp_a{ new AStruct };
+      std::shared_ptr<BStruct> sp_b{ new BStruct };
+
+      // --------------------------------------------------------
+
+      std::cout << "sp_a.use_count() = " 
+                << sp_a.use_count() << '\n';
+      // output -> sp_a.use_count() = 1
+
+      std::cout << "sp_b.use_count() = " 
+                << sp_b.use_count() << '\n';
+      // output -> sp_b.use_count() = 1
+
+      // --------------------------------------------------------
+
+      sp_a->msp_BStruct = sp_b;
+
+      std::cout << "sp_a.use_count() = " 
+                << sp_a.use_count() << '\n';
+      // output -> sp_a.use_count() = 1
+
+      std::cout << "sp_b.use_count() = " 
+                << sp_b.use_count() << '\n';
+      // output -> sp_b.use_count() = 2
+
+      // --------------------------------------------------------
+    }
+    // output ->
+    //  ~AStruct()
+    //  ~BStruct()
+
+    std::cout << "[1] - main ended\n";
+  }
+*/
+
+/*
+  // in this scenario destuctors of AStruct and BStruct
+  // will not be called because of the circular reference.
+
+  #include <memory>   // std::shared_ptr
+
+  struct BStruct;   // forward declaration
+
+  struct AStruct {
+    std::shared_ptr<BStruct> msp_BStruct;
+    ~AStruct() 
+    {
+      std::cout << "~AStruct()\n";
+    }
+  };
+
+  struct BStruct {
+    std::shared_ptr<AStruct> msp_AStruct;
+    ~BStruct() 
+    {
+      std::cout << "~BStruct()\n";
+    }
+  };
+
+  int main()
+  {
+    std::cout << "[0] - main started\n";
+
+    {
+      std::shared_ptr<AStruct> sp_a{ new AStruct };
+      std::shared_ptr<BStruct> sp_b{ new BStruct };
+
+      sp_a->msp_BStruct = sp_b;
+      sp_b->msp_AStruct = sp_a;
+
+      std::cout << "sp_a.use_count() = " 
+                << sp_a.use_count() << '\n';
+      // output -> sp_a.use_count() = 2
+
+      std::cout << "sp_b.use_count() = "
+                << sp_b.use_count() << '\n';
+      // output -> sp_b.use_count() = 2
+    }
+
+    std::cout << "[1] - main ended\n";
+  }
+*/
+
+/*
+  // using std::weak_ptr to break the circular reference
+  // <---- check circular_ref_weak_ptr.png ---->
+
+  #include <memory>   // std::shared_ptr, std::weak_ptr
+
+  struct BStruct;   // forward declaration
+
+  struct AStruct {
+    std::weak_ptr<BStruct> mwp_BStruct;
+    ~AStruct() 
+    {
+      std::cout << "~AStruct()\n";
+    }
+  };
+
+  struct BStruct {
+    std::shared_ptr<AStruct> msp_AStruct;
+    ~BStruct() 
+    {
+      std::cout << "~BStruct()\n";
+    }
+  };
+
+  int main()
+  {
+    std::cout << "[0] - main started\n";
+
+    {
+      std::shared_ptr<AStruct> sp_a{ new AStruct };
+      std::shared_ptr<BStruct> sp_b{ new BStruct };
+
+      sp_a->mwp_BStruct = sp_b;
+      sp_b->msp_AStruct = sp_a;
+
+      std::cout << "sp_a.use_count() = " 
+                << sp_a.use_count() << '\n';
+      // output -> sp_a.use_count() = 2
+
+      std::cout << "sp_b.use_count() = "
+                << sp_b.use_count() << '\n';
+      // output -> sp_b.use_count() = 1
+    }
+    // output ->
+    //  ~BStruct()
+    //  ~AStruct()
+
+    std::cout << "[1] - main ended\n";
+  }
+*/
+
+/*
+  #include <memory>   
+  // std::weak_ptr, std::make_shared, std::shared_ptr
+  #include <string>
+  #include <utility>  // std::move
+
+  class Dog {
+  private:
+    std::weak_ptr<Dog> mwp_friend;
+    std::string m_name;
+
+  public:
+    Dog(std::string name) : m_name(std::move(name))
+    {
+      std::cout << m_name << " born.\n";
+    }
+    ~Dog()
+    {
+      std::cout << m_name << " dead.\n";
+    }
+
+    void bark()
+    {
+      std::cout << m_name << " barked.\n";
+    }
+
+    void make_friend(std::shared_ptr<Dog> other)
+    {
+      mwp_friend = other;
+
+      std::cout << m_name << " - "  
+                << other->m_name << " are friends.\n";
+    }
+
+    bool has_friend() const
+    {
+      return !mwp_friend.expired();
+    }
+
+    void print() const
+    {
+      std::cout << "dog name = " << m_name;
+
+      if (!mwp_friend.expired())
+      {
+        std::cout << " has a friend called " 
+                  << mwp_friend.lock()->m_name << '\n';
+      }
+      else
+        std::cout << " does not have a friend.\n";
     }
   };
 
@@ -3140,26 +3244,38 @@
   {
     using namespace std;
 
-    auto sp = make_shared<Myclass>();
-    sp->func();
+    std::cout << "[0] - main started\n";
 
-    // output ->
-    //	Myclass ctor this: 000001F3E66CFB90
-    //	Myclass::func() function : 000001F3E66CFB90
-    //	sptr.use_count() = 2 -> We created another shared_ptr as same as (sp) in main block.
-    //	Myclass desturctor : 000001F3E66CFB90
-
-
-    Myclass* p = new Myclass;
-    try
     {
-      p->func();
+      shared_ptr<Dog> sp_dog1(make_shared<Dog>("dog1"));
+      // output -> dog1 born.
+      shared_ptr<Dog> sp_dog2(make_shared<Dog>("dog2"));
+      // output -> dog2 born.
+
+      sp_dog1->make_friend(sp_dog2);
+      // output -> dog1 - dog2 are friends.
+
+      sp_dog2->make_friend(sp_dog1);
+      // output -> dog2 - dog1 are friends.
+
+      std::cout << "sp_dog1.use_count = " 
+                << sp_dog1.use_count() << '\n';
+      // output -> sp_dog1.use_count = 1
+
+      std::cout << "sp_dog2.use_count = "
+                << sp_dog2.use_count() << '\n';
+      // output -> sp_dog2.use_count = 1
+
+      sp_dog1->print();
+      // output -> dog name = dog1 has a friend called dog2
+      
+      sp_dog2->print();
+      // output -> dog name = dog2 has a friend called dog1
     }
-    catch (const std::exception& ex)
-    {
-      cout << "exception caught: " << ex.what() << '\n';
-    }
-    // calling func() member function with raw pointer.
-    // output -> exception caught: bad_weak_ptr
+    // output -> 
+    //  dog2 dead.
+    //  dog1 dead.
+
+    std::cout << "[1] - main ended\n";
   }
 */
