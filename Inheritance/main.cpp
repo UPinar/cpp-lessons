@@ -353,7 +353,8 @@
       // will start from "foo" function scope -> NOT FOUND
       // will continue with "Der" class scope -> FOUND
       // name lookup will stop.
-      // context control phase will throw an error (no matching function)
+      // context control phase will throw an error 
+      // (no matching function)
 
       // ------------------------------------------------
 
@@ -718,12 +719,12 @@
     Der_2(const Der_2& other) : Base(other) {}
     // implicitly declared defaulted Der_2's copy ctor
     // is equivalent to this user declared copy ctor.
-    // upcasting is happening(other(Der) is implicitly upcasted to Base)
+    // upcasting is happening(other(Der) implicitly upcasted to Base)
 
     Der_2(Der_2&& other) : Base(std::move(other)) {}
     // implicitly declared defaulted Der_2's move ctor
     // is equivalent to this user declared move ctor.
-    // upcasting is happening(other(Der) is implicitly upcasted to Base)
+    // upcasting is happening(other(Der) implicitly upcasted to Base)
   };
 
   int main()
@@ -1056,8 +1057,8 @@
   1. member functions that gave an interface and an implementation
     to the derived classes.
   
-  2. member functions that gave an interface and a default implementation
-    to the derived classes.
+  2. member functions that gave an interface and a 
+    default implementation to the derived classes.
       -> if base class has a member function which is in type_2,
       that will make base class a polymorphic class.
 
@@ -1528,12 +1529,14 @@
     // ------------------------------------------------
 
     d1.foo(); // syntax error
-    // error: 'virtual void Der::foo()' is private within this context
+    // error: 'virtual void Der::foo()' 
+    // is private within this context
 
     // in compile time name lookup for "foo"
     // will start from Der class scope -> FOUND
     // context control is OKAY.
-    // access control is NOT OKAY because of "foo" is in private section.
+    // access control is NOT OKAY because of "foo" 
+    // is in private section.
 
     // ------------------------------------------------
   }
@@ -1577,7 +1580,8 @@
     // "foo" is an identifier 
     // its name lookup will start from Base class scope -> FOUND
     // context control is OKAY.
-    // access control is NOT OKAY because of "foo" is in private section.
+    // access control is NOT OKAY because of "foo" 
+    // is in private section.
 
     // ------------------------------------------------
 
@@ -1743,6 +1747,8 @@
 */
 
 /*
+          <---- check virtual_function_table.png ---->
+          
   - Every polymorphic object have to instantiate
     a Virtual Function Table Pointer(VPTR) to become alive.
 
@@ -1989,7 +1995,8 @@
 
   - public virtual
 
-  when client called Base classes destructor with Derived class object
+  when client called Base classes destructor 
+  with Derived class object
   public virtual destuctor will let virtual dispatch mechanism work
   so it won't be an undefined behaviour.
 
@@ -2428,7 +2435,8 @@
 
     // ------------------------------------------------
 
-    constexpr bool b1 = (typeid(*p_base) == typeid(Der)); // syntax error
+    constexpr bool b1 = (typeid(*p_base) == typeid(Der)); 
+    // syntax error
     // error: call to non-'constexpr' function 
     // 'bool std::type_info::operator==(const std::type_info&) const'
 
@@ -2667,7 +2675,8 @@
   // BClass can not reach AClass's protected
   // section by its member function. 
 
-  // It is not VALID to override member type(AClass)'s virtual function
+  // It is not VALID to override member type(AClass)'s 
+  // virtual function
 
   // ------------------------------------------------
 */
@@ -2745,7 +2754,8 @@
 
   int main()
   {
-    std::cout << "sizeof(EmptyClass) = " << sizeof(EmptyClass) << '\n';
+    std::cout << "sizeof(EmptyClass) = " 
+              << sizeof(EmptyClass) << '\n';
     // output -> sizeof(EmptyClass) = 1
 
     std::cout << "sizeof(AClass) = " << sizeof(AClass) << '\n';		
@@ -2879,7 +2889,8 @@
       public_B_func();
 
       // ---> class BClass : private AClass
-      // "public_B_func" function CAN NOT invoke "public_A_func" function
+      // "public_B_func" function CAN NOT invoke 
+      // "public_A_func" function
       // because of the private inheritence 
       // "public_A_func" function is in BClass's private section
 
@@ -3250,6 +3261,10 @@
 */
 
 /*
+          <---- check images/diamond_formation.png ---->
+*/
+
+/*
   class Person {
   public:
     Person()
@@ -3412,9 +3427,13 @@
 */
 
 /*
-                    -----------------------
-                    | virtual inheritance |
-                    -----------------------
+                      -----------------------
+                      | virtual inheritance |
+                      -----------------------
+*/
+
+/*
+    <---- check images/virtual_inheritance_iostream.png ---->
 */
 
 /*

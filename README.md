@@ -160,7 +160,7 @@
   - remove-erase idiom
   - `std::string_view` class (C++ 17)
   
-### [Inheritance](https://github.com/UPinar/CppLessons/tree/main/Inheritance)
+### [Inheritance](https://github.com/UPinar/CppLessons/tree/main/inheritance)
   - inheritance and name lookup
   - inheritance and access control
   - special member functions in inheritance
@@ -322,9 +322,10 @@
   - `std::shared_ptr`
   - `std::weak_ptr`
 
-### [Input - Output Operations](https://github.com/UPinar/CppLessons/tree/main/InputOutput)
+### [Input - Output Operations](https://github.com/UPinar/CppLessons/tree/main/input_output)
   - Formatted IO Operations
-  - File IO operations
+    - `std::ios::fmtflags`
+  - File IO Operations
 
 ### [User Defined Literals](https://github.com/UPinar/CppLessons/tree/main/UserDefinedLiterals)
   - cooked UDLs
