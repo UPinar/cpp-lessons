@@ -929,6 +929,110 @@
 */
 
 /*
+  #include <utility>  // std::forward
+
+  template <typename T>
+  void func(T&& x)
+  {
+    foo(std::forward<T>(x));
+    foo(std::forward<decltype(x)>(x));
+    // Those 2 lines are equivalent.
+  }
+
+  int main()
+  {
+    auto fn1 = [](auto val){ std::forward<decltype(val)>(val); };
+    // perfect forwarding in generalized lambda expression
+
+    auto fn2 = []<typename T>(T&& val){ std::forward<T>(val); };
+    // until C++20
+  }
+*/
+
+/*
+  #include <utility>  // std::forward
+
+  template <typename T>
+  void func(T&& x)
+  {
+    auto&& r = x;
+    // holding x's value in a variable
+
+    // use x in some code here...
+
+    foo(std::forward<decltype(r)>(r));
+    // perfect forward the value that being held in r
+  }
+*/
+
+/*
+  #include <utility>  // std::forward
+
+  template <typename T>
+  void func(T&& x)
+  {
+    // if i want to hold the return value in a variable
+    // then forward it to another function
+
+    auto&& r = foo(std::forward<T>(x));
+    // not wanted to directly forward the return value of foo.
+    // so holding the return value of foo in "r"
+
+    // some code being executed here...
+    // some code being executed here...
+
+    bar(std::forward<decltype(r)>(r));
+    // perfect forward the value that being held in r
+  }
+*/
+
+/*
+  #include <vector>
+  #include <string>
+
+  template <typename Con, typename T>
+  void Fill_1(Con& con, const T& val)
+  {
+    for (auto& elem : con)
+      elem = val;
+  }
+
+  template <typename Con, typename T>
+  void Fill_2(Con& con, const T& val)
+  {
+    for (auto&& elem : con)
+      elem = val;
+  }
+
+  int main()
+  {
+    using namespace std;
+
+    std::vector<int> ivec(100);
+    std::vector<bool> bvec(100);
+    std::vector<std::string> str_vec(100);
+
+    // ------------------------------------------------------
+
+    Fill_1(ivec, 12);           // VALID
+    Fill_1(str_vec, "hello");   // VALID
+
+    Fill_1(bvec, true);         // syntax error
+    // error: cannot bind non-const lvalue reference of type  
+    // std::_Bit_reference&' to an 
+    // rvalue of type 'std::_Bit_iterator::reference'
+
+    // ------------------------------------------------------
+
+    Fill_2(ivec, 12);           // VALID
+    Fill_2(str_vec, "hello");   // VALID
+    Fill_2(bvec, true);         // VALID
+
+    // ------------------------------------------------------
+  }
+*/
+
+/*
                           --------------
                           | type alias |
                           --------------

@@ -327,9 +327,9 @@
     - `std::ios::fmtflags`
   - File IO Operations
 
-### [User Defined Literals](https://github.com/UPinar/CppLessons/tree/main/UserDefinedLiterals)
-  - cooked UDLs
-  - uncooked UDLs
+### [User Defined Literals](https://github.com/UPinar/CppLessons/tree/main/user_defined_literals)
+  - cooked UDL
+  - uncooked UDL
 
 ### [Random Library](https://github.com/UPinar/CppLessons/tree/main/RandomLibrary)
   - random library

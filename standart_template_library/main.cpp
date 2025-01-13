@@ -1644,6 +1644,82 @@
 */
 
 /*
+            -----------------------------------------
+            | changes in lambda expressions (C++20) |
+            -----------------------------------------
+*/
+
+/*
+  #include <vector>
+
+  // compiler generated lambda function 
+  // for "fn1" lambda expression
+  class com_generated_lambda {
+  public:
+    template <typename T, typename U>
+    auto operator()(T x, U y){}
+  };
+
+  int main()
+  {
+    // ------------------------------------------------
+
+    auto fn1 = [](auto x, auto y) {};
+    fn1(11, 2.2);
+
+    // ------------------------------------------------
+
+    auto fn2 = []<typename T>(T x, T y) {};
+
+    // fn2(11, 2.2);   // syntax error
+    // error: no match for call to 
+    // '(main()::<lambda(T, T)>) (int, double)'
+
+    // both arguments has to be the same type
+
+    // ------------------------------------------------
+
+    auto fn3 = [](const auto& x){};
+
+    auto fn4 = []<typename T>(const std::vector<T>& t_vec){};
+    // only a std::vector can be passed to this lambda function
+
+    int ival{};
+    fn3(ival);    // VALID
+    fn4(ival);    // syntax error
+    // error: no match for call to 
+    // '(main()::<lambda(const std::vector<T>&)>) (int&)'
+
+    std::vector<int> ivec(12);
+    fn3(ivec);    // VALID
+    fn4(ivec);    // VALID
+
+    // ------------------------------------------------
+  }
+*/
+
+/*
+  // NTTP must be an integral type before C++20
+  template <double N>
+  class Myclass {};
+
+  int main()
+  {
+    Myclass<2.2> m1;  // VALID since C++20
+  }
+*/
+
+/*
+  struct Data {
+    int m_a, m_b, m_c;
+  };
+
+  // NTTP can be a literal type since C++20
+  template <Data d>
+  class Myclass {};
+*/
+
+/*
                   -----------------------------
                   | std::hash function object |
                   -----------------------------
