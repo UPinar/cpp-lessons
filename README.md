@@ -331,12 +331,16 @@
   - cooked UDL
   - uncooked UDL
 
-### [Random Library](https://github.com/UPinar/CppLessons/tree/main/RandomLibrary)
-  - random library
-  - algorithms related with random number generators
-  - `std::generate` && `std::generate_n` algorithms
-  - `std::shuffle` algorithm
-  - `std::sample` algorithm (C++17) 
+### [`<random>` module](https://github.com/UPinar/CppLessons/tree/main/random_module)
+  - `std::mt19937`, `std::mt19937_64`
+  - std::uniform_int_distribution
+  - std::uniform_real_distribution
+  - std::discrete_distribution
+  - std::bernoulli_distribution
+  - algorithms used in random number generation
+    - `std::generate`, `std::generate_n`
+    - `std::shuffle` 
+    - `std::sample`
 
 ### [`std::string_view` Class (C++17)](https://github.com/UPinar/CppLessons/tree/main/StringViewClass)
 
