@@ -342,7 +342,7 @@
     - `std::shuffle` 
     - `std::sample`
 
-### [`std::string_view` Class (C++17)](https://github.com/UPinar/CppLessons/tree/main/StringViewClass)
+### [`std::string_view` (C++17)](https://github.com/UPinar/CppLessons/tree/main/string_view)
 
 ### [Vocabulary Types (C++17)](https://github.com/UPinar/CppLessons/tree/main/VocabularyTypes)
   - `std::optional`
